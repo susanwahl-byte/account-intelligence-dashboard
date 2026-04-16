@@ -764,8 +764,6 @@ body {
 </div>
   </div>
 
-  <div id="actionModal" style="display:none;" class="modal-overlay"></div>
-
   <script>
 // accounts.json — written by Cowork data refresh skill
 // Last updated: manually seeded
@@ -1473,6 +1471,11 @@ function copyModalPrompt() {
     // ── Data alias — ported functions use accountData ───────────────
     const accountData = ACCOUNTS;
 
+    // ── State variables ─────────────────────────────────────────────
+    let currentFilter = 'all';
+    let currentLiTab = 'contacts';
+    let nsOverrides = {};
+
     // ── Get account from URL param ──────────────────────────────────
     const urlParams = new URLSearchParams(window.location.search);
     let currentAccount = urlParams.get('account') || Object.keys(ACCOUNTS)[0];
@@ -1977,18 +1980,18 @@ function renderActionHub(acct) {
       renderActionHub(acct);
     }
 
-    // Override openAction to use nav.js version with built prompt
-    const _origOpenAction = window.openAction;
-    function openAction(actionId, acct, title) {
+    // Save reference to the modal display function (outer openAction)
+    const _showModal = window.openAction;
+
+    // Override global openAction so buttons auto-build prompts
+    window.openAction = function(actionId, acct, title) {
       const prompt = buildAccountPrompt(actionId, acct || currentAccount);
-      window._openActionModal(actionId, acct || currentAccount, title, prompt);
-    }
+      _showModal(actionId, acct || currentAccount, title, prompt);
+    };
 
     // Init
     injectNav('account');
     injectModal();
-    // Expose modal opener
-    window._openActionModal = window.openAction;
 
     rebuildSelect();
     switchAccount(currentAccount);
