@@ -1979,16 +1979,18 @@ function renderActionHub(acct) {
 // ================================================================
 
     function renderAll(acct) {
+      if (!accountData[acct]) {
+        console.error('renderAll: unknown account', acct);
+        document.getElementById('detailAccountName').textContent = acct + ' (not found)';
+        return;
+      }
       document.getElementById('detailAccountName').textContent = acct;
       document.getElementById('accountSelect').value = acct;
-      renderContextBar(acct);
-      renderLinkedIn(acct);
-      renderBuyingMap(acct);
-      renderZoomInfo(acct);
-      renderSalesforce(acct);
-      render6sense(acct);
-      renderMutiny(acct);
-      renderActionHub(acct);
+      const sections = [renderContextBar, renderLinkedIn, renderBuyingMap, renderZoomInfo, renderSalesforce, render6sense, renderMutiny, renderActionHub];
+      sections.forEach(fn => {
+        try { fn(acct); }
+        catch(e) { console.error(fn.name + ' failed for ' + acct + ':', e); }
+      });
     }
 
     // Save reference to the modal display function (outer openAction)
