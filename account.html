@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account Detail — Amplitude AE Dashboard</title>
+  <style>
+/* ── Amplitude Design Tokens ─────────────────────────────────────── */
+:root {
+  --navy:      #001A4F;
+  --blue:      #0052F2;
+  --lilac:     #6980FF;
+  --teal:      #00B2A9;
+  --offwhite:  #F7F9FC;
+  --dark:      #1A1A2E;
+  --mid:       #64748B;
+  --light:     #E2E8F0;
+  --surface:   #fff;
+  --radius:    10px;
+  --shadow:    0 2px 12px rgba(0,0,0,0.07);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--offwhite);
+  color: var(--dark);
+  min-height: 100vh;
+  font-size: 13px;
+}
+
+/* ── Nav ─────────────────────────────────────────────────────────── */
+.nav {
+  background: var(--navy);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.nav-logo img { height: 20px; width: auto; display: block; }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-links a {
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-links a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-links a.active { color: #fff; background: rgba(255,255,255,0.12); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.refresh-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.85);
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s;
+}
+.refresh-btn:hover { background: rgba(255,255,255,0.18); }
+
+.last-sync {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ── Page wrapper ────────────────────────────────────────────────── */
+.page { padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.page-subtitle {
+  font-size: 12px;
+  color: var(--mid);
+  margin-top: 2px;
+}
+
+/* ── Card ────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--light);
+}
+
+.card-header {
+  padding: 14px 18px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ── Badges ──────────────────────────────────────────────────────── */
+.badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.badge-expansion { background: #EEF2FF; color: #4338CA; }
+.badge-land      { background: #F0FDF4; color: #166534; }
+.badge-stage2    { background: #FFF7ED; color: #C2410C; }
+.badge-stage3    { background: #ECFDF5; color: #065F46; }
+.badge-stage0    { background: #F8FAFC; color: #64748B; }
+.badge-lost      { background: #FEF2F2; color: #991B1B; }
+
+/* ── Intent score bar ────────────────────────────────────────────── */
+.intent-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.intent-track {
+  flex: 1;
+  height: 5px;
+  background: var(--light);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.intent-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--blue);
+}
+
+.intent-score {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--blue);
+  min-width: 28px;
+  text-align: right;
+}
+
+/* ── Urgency labels ──────────────────────────────────────────────── */
+.urg-today { border-left: 3px solid #EF4444; }
+.urg-week  { border-left: 3px solid #F59E0B; }
+.urg-month { border-left: 3px solid #6980FF; }
+
+.sl-today { background: #FEE2E2; color: #991B1B; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+.sl-week  { background: #FEF3C7; color: #92400E; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+.sl-month { background: #EEF2FF; color: #4338CA; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+.btn {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+  font-size: 12px;
+  padding: 8px 16px;
+}
+.btn-primary:hover { background: var(--navy); }
+
+.btn-cowork {
+  background: var(--blue);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.15s;
+}
+.btn-cowork:hover { background: var(--navy); }
+.btn-cowork.success { background: #059669; }
+
+.btn-ghost {
+  background: none;
+  color: var(--mid);
+  font-size: 11px;
+  padding: 5px 10px;
+  border: 1px solid var(--light);
+}
+.btn-ghost:hover { border-color: var(--blue); color: var(--blue); }
+
+/* ── Filter chips ────────────────────────────────────────────────── */
+.filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.chip {
+  background: var(--surface);
+  border: 1px solid var(--light);
+  color: var(--mid);
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chip:hover { border-color: var(--blue); color: var(--blue); }
+.chip.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+/* ── Modal ───────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,20,50,0.45);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 14px;
+  width: 560px;
+  max-width: 100%;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+  overflow: hidden;
+}
+
+.modal-head {
+  background: var(--navy);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-head-title {
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-size: 22px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-body { padding: 20px; }
+
+.modal-cowork-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--blue);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 11px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.15s;
+}
+.modal-cowork-btn:hover { background: var(--navy); }
+.modal-cowork-btn.success { background: #059669; }
+
+.modal-prompt-hint {
+  font-size: 10px;
+  color: var(--mid);
+  margin-bottom: 8px;
+}
+
+.modal-prompt-text {
+  background: var(--offwhite);
+  border: 1px solid var(--light);
+  border-radius: 7px;
+  padding: 12px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--dark);
+  max-height: 220px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  margin-bottom: 8px;
+}
+
+.modal-copy-btn {
+  background: var(--offwhite);
+  border: 1px solid var(--light);
+  color: var(--mid);
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.modal-copy-btn.copied { background: #D1FAE5; border-color: #6EE7B7; color: #065F46; }
+
+/* ── Misc helpers ────────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--mid);
+}
+
+.empty-state h3 { font-size: 15px; margin-bottom: 6px; color: var(--dark); }
+.empty-state p  { font-size: 12px; }
+
+.dot-connected { width: 7px; height: 7px; background: #22C55E; border-radius: 50%; display: inline-block; }
+.dot-error     { width: 7px; height: 7px; background: #EF4444; border-radius: 50%; display: inline-block; }
+.dot-unknown   { width: 7px; height: 7px; background: #94A3B8; border-radius: 50%; display: inline-block; }
+
+</style>
+  <style>
+.nav-logo { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+.nav-logo span { color: #fff; font-weight: 700; font-size: 16px; }
+.sf-status { display: flex; align-items: center; gap: 6px; background: rgba(105,128,255,0.15); border: 1px solid rgba(105,128,255,0.35); border-radius: 20px; padding: 4px 12px; }
+.sf-dot { width: 7px; height: 7px; border-radius: 50%; background: #6980FF; }
+.sf-label { color: #fff; font-size: 11px; font-weight: 500; }
+.sync-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.85); font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 5px; cursor: pointer; display:flex;align-items:center;gap:5px; }
+.sync-btn:hover { background: rgba(255,255,255,0.18); }
+.sync-btn.loading { opacity: 0.6; pointer-events: none; }
+.filter-chip { background: #F1F5F9; border: 1px solid #E2E8F0; color: #64748B; font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 500; padding: 4px 11px; border-radius: 20px; cursor: pointer; }
+.filter-chip:hover { border-color: #0052F2; color: #0052F2; background: #EFF4FF; }
+.filter-chip.active { background: #0052F2; color: #fff; border-color: #0052F2; }
+.context-bar { background: #001A4F; padding: 10px 24px 12px; display: flex; flex-direction: column; gap: 6px; }
+.context-bar-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.main { padding: 20px 24px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; }
+.col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; }
+.li-btn { display: inline-flex; align-items: center; gap: 4px; background: #0052F2; color: #fff; font-size: 10px; font-weight: 600; font-family:'Poppins',sans-serif; padding: 4px 9px; border-radius: 5px; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+.li-btn:hover { background: #001A4F; }
+.add-contact-btn { width: 100%; margin-top: 10px; background: none; border: 1px dashed #CBD5E1; color: #94A3B8; font-family:'Poppins',sans-serif; font-size: 11px; padding: 7px; border-radius: 6px; cursor: pointer; }
+.add-contact-btn:hover { border-color: #0052F2; color: #0052F2; background: #F0F4FF; }
+.li-tabs { display: flex; gap: 4px; }
+.li-tab { background: #F1F5F9; border: 1px solid #E2E8F0; color: #64748B; font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 600; padding: 4px 11px; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+.li-tab:hover { border-color: #0052F2; color: #0052F2; background: #EFF4FF; }
+.li-tab.active { background: #0052F2; color: #fff; border-color: #0052F2; }
+.involve-banner { background: #001A4F; border-radius: 8px; padding: 11px 14px; margin-bottom: 14px; border: 1px solid rgba(105,128,255,0.3); }
+.involve-title { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+.involve-people { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.involve-chip { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.involve-chip::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #6980FF; flex-shrink: 0; }
+.involve-note { font-size: 11px; color: rgba(255,255,255,0.75); line-height: 1.45; }
+.map-li-btn { display: inline-flex; align-items: center; background: #F1F5F9; color: #0052F2; font-size: 9px; font-weight: 600; font-family:'Poppins',sans-serif; padding: 3px 7px; border-radius: 4px; text-decoration: none; border: 1px solid #DBEAFE; }
+.map-li-btn:hover { background: #0052F2; color: #fff; }
+.sf-opp-name { font-size: 13px; font-weight: 600; color: #0052F2; text-decoration: none; }
+.sf-opp-name:hover { text-decoration: underline; }
+.sf-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin: 10px 0; }
+.sf-meta-item { background: #F8FAFC; border-radius: 6px; padding: 7px 9px; }
+.sf-meta-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; font-weight: 600; }
+.sf-meta-value { font-size: 12px; font-weight: 600; color: #1A1A2E; margin-top: 1px; }
+.sf-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin: 12px 0 6px; }
+.sf-next-steps-display { background: #F8FAFC; border-radius: 7px; padding: 10px; font-size: 12px; color: #1A1A2E; line-height: 1.6; white-space: pre-wrap; }
+.sf-next-steps-edit { width: 100%; background: #fff; border: 2px solid #0052F2; border-radius: 7px; padding: 10px; font-family:'Poppins',sans-serif; font-size: 12px; color: #1A1A2E; line-height: 1.6; resize: vertical; min-height: 90px; outline: none; }
+.sf-edit-actions { display: flex; gap: 7px; margin-top: 7px; }
+.btn-primary { background: #0052F2; color: #fff; border: none; font-family:'Poppins',sans-serif; font-size: 12px; font-weight: 600; padding: 7px 14px; border-radius: 6px; cursor: pointer; }
+.btn-primary:hover { background: #001A4F; }
+.btn-secondary { background: #F1F5F9; color: #64748B; border: none; font-family:'Poppins',sans-serif; font-size: 12px; font-weight: 500; padding: 7px 12px; border-radius: 6px; cursor: pointer; }
+.btn-secondary:hover { background: #E2E8F0; }
+.edit-btn { background: none; border: 1px solid #CBD5E1; color: #64748B; font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 5px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; }
+.edit-btn:hover { border-color: #0052F2; color: #0052F2; }
+.sense-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
+.sense-right-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 7px; margin-top: 2px; }
+.mutiny-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.mutiny-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin: 12px 0 6px; }
+.mutiny-segment { background: #F8FAFC; border-left: 3px solid #6980FF; padding: 8px 10px; border-radius: 0 6px 6px 0; font-size: 12px; font-weight: 600; color: #1A1A2E; }
+.mutiny-sub { font-size: 10px; color: #64748B; font-weight: 400; margin-top: 2px; }
+.hub-layout { display: flex; gap: 20px; min-height: 0; }
+.hub-steps { flex: 1; min-width: 0; overflow-y: auto; max-height: 320px; }
+.hub-actions { width: 210px; flex-shrink: 0; border-left: 1px solid #F1F5F9; padding-left: 18px; overflow-y: auto; max-height: 320px; }
+.qa-section-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #CBD5E1; margin: 9px 0 4px; padding-left: 2px; }
+.qa-section-label:first-of-type { margin-top: 0; }
+.hub-panel-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #94A3B8; margin-bottom: 10px; }
+.step-item { display: flex; gap: 10px; padding: 10px 12px; border-radius: 8px; border: 1px solid #F1F5F9; margin-bottom: 6px; background: #fff; transition: box-shadow 0.15s; }
+.step-item:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+.step-item.urg-today { border-left: 3px solid #EF4444; }
+.step-item.urg-week  { border-left: 3px solid #F59E0B; }
+.step-item.urg-month { border-left: 3px solid #6980FF; }
+.step-num { width: 20px; height: 20px; border-radius: 50%; background: #F1F5F9; color: #64748B; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.step-body { flex: 1; min-width: 0; }
+.step-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; flex-wrap: wrap; }
+.step-urgency { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+.step-type-badge { font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px; }
+.stype-email    { background:#EFF6FF;color:#1D4ED8; }
+.stype-call     { background:#F0FDF4;color:#166534; }
+.stype-deck     { background:#FDF4FF;color:#7E22CE; }
+.stype-linkedin { background:#E0F2FE;color:#0369A1; }
+.stype-meeting  { background:#FFF7ED;color:#C2410C; }
+.stype-event    { background:#F0FDF4;color:#065F46; }
+.step-title { font-size: 12px; font-weight: 600; color: #1A1A2E; margin-bottom: 3px; line-height: 1.35; }
+.step-why { font-size: 11px; color: #64748B; line-height: 1.45; margin-bottom: 6px; }
+.step-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.step-who { display: flex; gap: 3px; flex-wrap: wrap; }
+.who-chip { font-size: 9px; font-weight: 600; background: #F1F5F9; color: #64748B; padding: 2px 6px; border-radius: 10px; }
+.who-me { background: #EFF6FF; color: #1D4ED8; }
+.step-cta { background: #0052F2; color: #fff; border: none; font-family:'Poppins',sans-serif; font-size: 10px; font-weight: 700; padding: 4px 11px; border-radius: 5px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+.step-cta:hover { background: #001A4F; }
+.qa-btn { width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 7px; border: 1px solid #E2E8F0; background: #fff; color: #1A1A2E; font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 600; cursor: pointer; margin-bottom: 5px; text-align: left; }
+.qa-btn:hover { border-color: #0052F2; background: #EFF4FF; color: #0052F2; }
+.qa-btn.external::after { content: '↗'; font-size: 10px; margin-left: auto; color: #94A3B8; }
+.qa-icon { width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+.qa-icon-blue { background: #EFF6FF; }
+.qa-icon-purple { background: #FDF4FF; }
+.qa-icon-green { background: #F0FDF4; }
+.qa-icon-orange { background: #FFF7ED; }
+.qa-icon-teal { background: #F0FDFA; }
+.qa-divider { height: 1px; background: #F1F5F9; margin: 8px 0; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(10,20,50,0.45); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.modal-box { background: #fff; border-radius: 14px; width: 560px; max-width: 100%; box-shadow: 0 24px 64px rgba(0,0,0,0.22); overflow: hidden; }
+.modal-head { background: #001A4F; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+.modal-head-title { color: #fff; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.modal-close { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 22px; cursor: pointer; line-height: 1; padding: 0; }
+.modal-close:hover { color: #fff; }
+.modal-body { padding: 20px; }
+.modal-sec-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 7px; }
+.modal-ext-btn { display: inline-flex; align-items: center; gap: 7px; background: #0052F2; color: #fff; font-family:'Poppins',sans-serif; font-size: 12px; font-weight: 700; padding: 9px 18px; border-radius: 7px; text-decoration: none; margin-bottom: 14px; }
+.modal-ext-btn:hover { background: #001A4F; }
+.modal-skill-box { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 7px; padding: 10px 13px; font-size: 11px; color: #1D4ED8; margin-bottom: 14px; line-height: 1.5; }
+.modal-prompt-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 7px; }
+.modal-prompt-text { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 7px; padding: 12px; font-size: 12px; color: #1A1A2E; line-height: 1.65; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
+.modal-copy-btn { margin-top: 9px; background: #F1F5F9; border: 1px solid #E2E8F0; color: #475569; font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 5px; cursor: pointer; }
+.modal-copy-btn.copied { background: #D1FAE5; border-color: #6EE7B7; color: #065F46; }
+.modal-cowork-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #0052F2; color: #fff; font-family:'Poppins',sans-serif; font-size: 13px; font-weight: 700; padding: 11px 18px; border-radius: 8px; border: none; cursor: pointer; margin-bottom: 10px; transition: background 0.15s; }
+.modal-cowork-btn:hover { background: #001A4F; }
+.modal-cowork-btn.success { background: #059669; }
+.modal-prompt-hint { font-size: 10px; color: #94A3B8; margin-bottom: 8px; }
+.modal-copy-btn:hover { background: #E2E8F0; }
+.modal-copy-btn.copied { background: #DCFCE7; color: #166534; border-color: #BBF7D0; }
+    .sf-status { display: flex; align-items: center; gap: 6px; background: rgba(105,128,255,0.15); border: 1px solid rgba(105,128,255,0.35); border-radius: 20px; padding: 4px 12px; }
+    .sf-dot { width: 7px; height: 7px; border-radius: 50%; background: #6980FF; }
+    .sf-label { color: #fff; font-size: 11px; font-weight: 500; }
+    .filter-chip { background: #F1F5F9; border: 1px solid #E2E8F0; color: #64748B; font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 500; padding: 4px 11px; border-radius: 20px; cursor: pointer; }
+    .filter-chip:hover { border-color: #0052F2; color: #0052F2; background: #EFF4FF; }
+    .filter-chip.active { background: #0052F2; color: #fff; border-color: #0052F2; }
+    .context-bar { background: #001A4F; padding: 10px 24px 12px; display: flex; flex-direction: column; gap: 6px; }
+    .context-bar-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .li-btn { display: inline-flex; align-items: center; gap: 4px; background: #0052F2; color: #fff; font-size: 10px; font-weight: 600; font-family:'Poppins',sans-serif; padding: 4px 9px; border-radius: 5px; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+    .li-btn:hover { background: #001A4F; }
+    .add-contact-btn { width: 100%; margin-top: 10px; background: none; border: 1px dashed #CBD5E1; color: #94A3B8; font-family:'Poppins',sans-serif; font-size: 11px; padding: 7px; border-radius: 6px; cursor: pointer; }
+    .add-contact-btn:hover { border-color: #0052F2; color: #0052F2; background: #F0F4FF; }
+    .li-tabs { display: flex; gap: 4px; }
+    .li-tab { background: #F1F5F9; border: 1px solid #E2E8F0; color: #64748B; font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 600; padding: 4px 11px; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+    .li-tab:hover { border-color: #0052F2; color: #0052F2; background: #EFF4FF; }
+    .li-tab.active { background: #0052F2; color: #fff; border-color: #0052F2; }
+    .involve-banner { background: #001A4F; border-radius: 8px; padding: 11px 14px; margin-bottom: 14px; border: 1px solid rgba(105,128,255,0.3); }
+    .involve-title { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+    .involve-people { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+    .involve-chip { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .involve-chip::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #6980FF; flex-shrink: 0; }
+    .involve-note { font-size: 11px; color: rgba(255,255,255,0.75); line-height: 1.45; }
+    .map-tier { margin-bottom: 12px; }
+    .map-tier-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: #94A3B8; margin-bottom: 6px; padding-left: 2px; }
+    .map-person { display: flex; align-items: center; gap: 0; border-radius: 7px; border: 1px solid #F1F5F9; overflow: hidden; margin-bottom: 5px; background: #fff; transition: box-shadow 0.15s; }
+    .map-person:hover { box-shadow: 0 2px 8px rgba(19,82,200,0.1); }
+    .map-person.priority { border-color: #BFDBFE; box-shadow: 0 0 0 2px rgba(19,82,200,0.12); }
+    .map-status-bar { width: 4px; flex-shrink: 0; align-self: stretch; }
+    .map-person-body { flex: 1; padding: 8px 10px; min-width: 0; }
+    .map-person-name { font-size: 12px; font-weight: 600; color: #1A1A2E; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .map-priority-star { font-size: 11px; }
+    .map-person-title { font-size: 10px; color: #64748B; margin-top: 1px; }
+    .map-person-note { font-size: 10px; color: #94A3B8; font-style: italic; margin-top: 3px; line-height: 1.3; }
+    .map-person-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; padding: 8px 10px; flex-shrink: 0; }
+    .map-role-badge { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+    .map-status-label { font-size: 9px; font-weight: 600; }
+    .map-li-btn { display: inline-flex; align-items: center; background: #F1F5F9; color: #0052F2; font-size: 9px; font-weight: 600; font-family:'Poppins',sans-serif; padding: 3px 7px; border-radius: 4px; text-decoration: none; border: 1px solid #DBEAFE; }
+    .map-li-btn:hover { background: #0052F2; color: #fff; }
+    .signal-item { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid #F8FAFC; }
+    .signal-item:last-child { border-bottom: none; }
+    .signal-date { font-size: 10px; color: #94A3B8; white-space: nowrap; padding-top: 2px; min-width: 54px; }
+    .signal-text { font-size: 11px; color: #475569; line-height: 1.4; }
+    .signal-dot { width: 6px; height: 6px; border-radius: 50%; background: #6980FF; flex-shrink: 0; margin-top: 4px; }
+    .sf-next-steps-display { background: #F8FAFC; border-radius: 7px; padding: 10px; font-size: 12px; color: #1A1A2E; line-height: 1.6; white-space: pre-wrap; }
+    .sf-next-steps-edit { width: 100%; background: #fff; border: 2px solid #0052F2; border-radius: 7px; padding: 10px; font-family:'Poppins',sans-serif; font-size: 12px; color: #1A1A2E; line-height: 1.6; resize: vertical; min-height: 90px; outline: none; }
+    .btn-primary { background: #0052F2; color: #fff; border: none; font-family:'Poppins',sans-serif; font-size: 12px; font-weight: 600; padding: 7px 14px; border-radius: 6px; cursor: pointer; }
+    .btn-primary:hover { background: #001A4F; }
+    .btn-secondary { background: #F1F5F9; color: #64748B; border: none; font-family:'Poppins',sans-serif; font-size: 12px; font-weight: 500; padding: 7px 12px; border-radius: 6px; cursor: pointer; }
+    .btn-secondary:hover { background: #E2E8F0; }
+    .edit-btn { background: none; border: 1px solid #CBD5E1; color: #64748B; font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 5px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; }
+    .edit-btn:hover { border-color: #0052F2; color: #0052F2; }
+    .sense-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
+    .sense-right-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 7px; margin-top: 2px; }
+    .mutiny-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .mutiny-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin: 12px 0 6px; }
+    .mutiny-segment { background: #F8FAFC; border-left: 3px solid #6980FF; padding: 8px 10px; border-radius: 0 6px 6px 0; font-size: 12px; font-weight: 600; color: #1A1A2E; }
+    .mutiny-sub { font-size: 10px; color: #64748B; font-weight: 400; margin-top: 2px; }
+    .hub-layout { display: flex; gap: 20px; min-height: 0; }
+    .hub-steps { flex: 1; min-width: 0; overflow-y: auto; max-height: 320px; }
+    .hub-actions { width: 210px; flex-shrink: 0; border-left: 1px solid #F1F5F9; padding-left: 18px; overflow-y: auto; max-height: 320px; }
+    .qa-section-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #CBD5E1; margin: 9px 0 4px; padding-left: 2px; }
+    .qa-section-label:first-of-type { margin-top: 0; }
+    .hub-panel-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #94A3B8; margin-bottom: 10px; }
+    .step-item { display: flex; gap: 10px; padding: 10px 12px; border-radius: 8px; border: 1px solid #F1F5F9; margin-bottom: 6px; background: #fff; transition: box-shadow 0.15s; }
+    .step-item:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+    .step-item.urg-today { border-left: 3px solid #EF4444; }
+    .step-item.urg-week  { border-left: 3px solid #F59E0B; }
+    .step-item.urg-month { border-left: 3px solid #6980FF; }
+    .step-num { width: 20px; height: 20px; border-radius: 50%; background: #F1F5F9; color: #64748B; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .step-body { flex: 1; min-width: 0; }
+    .step-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; flex-wrap: wrap; }
+    .step-urgency { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+    .step-type-badge { font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px; }
+    .stype-email    { background:#EFF6FF;color:#1D4ED8; }
+    .stype-call     { background:#F0FDF4;color:#166534; }
+    .stype-deck     { background:#FDF4FF;color:#7E22CE; }
+    .stype-linkedin { background:#E0F2FE;color:#0369A1; }
+    .stype-meeting  { background:#FFF7ED;color:#C2410C; }
+    .stype-event    { background:#F0FDF4;color:#065F46; }
+    .step-title { font-size: 12px; font-weight: 600; color: #1A1A2E; margin-bottom: 3px; line-height: 1.35; }
+    .step-why { font-size: 11px; color: #64748B; line-height: 1.45; margin-bottom: 6px; }
+    .step-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .step-who { display: flex; gap: 3px; flex-wrap: wrap; }
+    .who-chip { font-size: 9px; font-weight: 600; background: #F1F5F9; color: #64748B; padding: 2px 6px; border-radius: 10px; }
+    .who-me { background: #EFF6FF; color: #1D4ED8; }
+    .step-cta { background: #0052F2; color: #fff; border: none; font-family:'Poppins',sans-serif; font-size: 10px; font-weight: 700; padding: 4px 11px; border-radius: 5px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+    .step-cta:hover { background: #001A4F; }
+    .qa-btn { width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 7px; border: 1px solid #E2E8F0; background: #fff; color: #1A1A2E; font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 600; cursor: pointer; margin-bottom: 5px; text-align: left; }
+    .qa-btn:hover { border-color: #0052F2; background: #EFF4FF; color: #0052F2; }
+    .qa-btn.external::after { content: '↗'; font-size: 10px; margin-left: auto; color: #94A3B8; }
+    .qa-icon { width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+    .qa-icon-blue { background: #EFF6FF; }
+    .qa-icon-purple { background: #FDF4FF; }
+    .qa-icon-green { background: #F0FDF4; }
+    .qa-icon-orange { background: #FFF7ED; }
+    .qa-icon-teal { background: #F0FDFA; }
+    .qa-divider { height: 1px; background: #F1F5F9; margin: 8px 0; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(10,20,50,0.45); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .modal-box { background: #fff; border-radius: 14px; width: 560px; max-width: 100%; box-shadow: 0 24px 64px rgba(0,0,0,0.22); overflow: hidden; }
+    .modal-head { background: #001A4F; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .modal-head-title { color: #fff; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .modal-close { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 22px; cursor: pointer; line-height: 1; padding: 0; }
+    .modal-close:hover { color: #fff; }
+    .modal-body { padding: 20px; }
+    .modal-sec-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 7px; }
+    .modal-ext-btn { display: inline-flex; align-items: center; gap: 7px; background: #0052F2; color: #fff; font-family:'Poppins',sans-serif; font-size: 12px; font-weight: 700; padding: 9px 18px; border-radius: 7px; text-decoration: none; margin-bottom: 14px; }
+    .modal-ext-btn:hover { background: #001A4F; }
+    .modal-skill-box { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 7px; padding: 10px 13px; font-size: 11px; color: #1D4ED8; margin-bottom: 14px; line-height: 1.5; }
+    .modal-prompt-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 7px; }
+    .modal-prompt-text { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 7px; padding: 12px; font-size: 12px; color: #1A1A2E; line-height: 1.65; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
+    .modal-copy-btn { margin-top: 9px; background: #F1F5F9; border: 1px solid #E2E8F0; color: #475569; font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 5px; cursor: pointer; }
+    .modal-copy-btn.copied { background: #D1FAE5; border-color: #6EE7B7; color: #065F46; }
+    .modal-cowork-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #0052F2; color: #fff; font-family:'Poppins',sans-serif; font-size: 13px; font-weight: 700; padding: 11px 18px; border-radius: 8px; border: none; cursor: pointer; margin-bottom: 10px; transition: background 0.15s; }
+    .modal-cowork-btn:hover { background: #001A4F; }
+    .modal-cowork-btn.success { background: #059669; }
+    .modal-prompt-hint { font-size: 10px; color: #94A3B8; margin-bottom: 8px; }
+    .modal-copy-btn:hover { background: #E2E8F0; }
+    .modal-copy-btn.copied { background: #DCFCE7; color: #166534; border-color: #BBF7D0; }
+
+    .account-detail-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 24px;
+      background: #fff;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .back-link {
+      color: #64748B;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-link:hover { color: #0052F2; }
+
+    .account-detail-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #001A4F;
+    }
+
+    .account-switcher {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .account-switcher select {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 5px 10px;
+      color: #1A1A2E;
+      cursor: pointer;
+      outline: none;
+    }
+    .account-switcher select:focus { border-color: #0052F2; }
+
+    .detail-wrap {
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="app-nav"></div>
+
+  <!-- Account header bar -->
+  <div class="account-detail-header">
+    <a class="back-link" href="index.html">← All Accounts</a>
+    <div style="width:1px;height:18px;background:#E2E8F0;"></div>
+    <div class="account-detail-name" id="detailAccountName">Loading…</div>
+    <div class="account-switcher">
+      <label style="font-size:11px;color:#94A3B8;">Switch account:</label>
+      <select id="accountSelect" onchange="switchAccount(this.value)"></select>
+    </div>
+  </div>
+
+  <!-- Context bar + involve banner injected here by JS -->
+  <div id="contextBar"></div>
+
+  <div class="detail-wrap">
+    <div class="main">
+
+  <!-- ACTION HUB (full width) -->
+  <div class="card col-6" style="grid-column: span 6;">
+    <div class="card-header">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0052F2" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Best Next Steps
+        <span style="font-size:10px;font-weight:500;color:#94A3B8;margin-left:4px;">· AI-synthesized from all signals</span>
+      </div>
+    </div>
+    <div style="padding:14px 18px;">
+      <div class="hub-layout">
+        <div class="hub-steps" id="hubSteps"></div>
+        <div class="hub-actions" id="hubActions"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card col-2">
+    <div class="card-header">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#0052F2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        LinkedIn
+      </div>
+      <div class="li-tabs">
+        <button class="li-tab active" id="tabContacts" onclick="switchLiTab('contacts')">Contacts</button>
+        <button class="li-tab" id="tabMap" onclick="switchLiTab('map')">Buying Map</button>
+      </div>
+    </div>
+    <div class="card-body" id="linkedinBody"></div>
+  </div>
+
+  <div class="card col-2">
+    <div class="card-header">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6980FF" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Company Intel
+      </div>
+      <button class="refresh-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+    </div>
+    <div class="card-body" id="zoominfoBody"></div>
+  </div>
+
+  <div class="card col-2">
+    <div class="card-header">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0052F2" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+        Salesforce
+      </div>
+      <button class="refresh-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+    </div>
+    <div class="card-body" id="salesforceBody"></div>
+  </div>
+
+  <div class="card col-3">
+    <div class="card-header">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        6sense Intent Signals
+      </div>
+      <button class="refresh-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+    </div>
+    <div class="card-body-wide" id="sixsenseBody"></div>
+  </div>
+
+  <div class="card col-3">
+    <div class="card-header">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Mutiny Website Signals
+      </div>
+      <button class="refresh-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+    </div>
+    <div class="card-body-wide" id="mutinyBody"></div>
+  </div>
+</div>
+  </div>
+
+  <div id="actionModal" style="display:none;" class="modal-overlay"></div>
+
+  <script>
+// accounts.json — written by Cowork data refresh skill
+// Last updated: manually seeded
+// DO NOT edit by hand — regenerated by Cowork on each refresh
+
+const ACCOUNTS = {
+  "1Password": {
+    type: "Expansion", stage: "Stage 2",
+    accountSummary: "Strong expansion candidate — Nancy Wang (CTO) owns AI-first mandate and the $200K ITOM use case budget. AI just approved for EU org, CSMs being onboarded. Best window in 12 months to push volume expansion + Experimentation/PSP upsell.",
+    linkedin: [
+      { name: "Nancy Wang", title: "Chief Technology Officer", relevance: "buyer", note: "Key exec target — needs to validate volume expansion. Spenser Skates intro TBD.", li: "#" },
+      { name: "Lauren Attewell", title: "Head of Legal & Admin", relevance: "influencer", note: "Controls contract + procurement process.", li: "#" },
+      { name: "Pedro Canahuati", title: "SVP Engineering", relevance: "influencer", note: "Engineering leader who owns the platform — cares about data depth.", li: "#" },
+      { name: "Jeff Shiner", title: "CEO", relevance: "buyer", note: "Ultimate economic buyer for expansion of this size.", li: "#" },
+      { name: "Akshay Bhargava", title: "Chief Product Officer", relevance: "influencer", note: "Product org owns Amplitude usage — potential champion if engaged.", li: "#" },
+    ],
+    zoominfo: {
+      company: "1Password", industry: "Cybersecurity / SaaS", employees: "~800", hq: "Toronto, ON", revenue: "$320M+ ARR", funding: "Series C — $620M",
+      website: "1password.com",
+      techStack: [{ name: "Amplitude ✓", type: "amplitude" }, { name: "Segment", type: "normal" }, { name: "Snowflake", type: "normal" }, { name: "dbt", type: "normal" }, { name: "Looker", type: "normal" }, { name: "Pendo ⚠", type: "competitor" }, { name: "Zendesk", type: "normal" }],
+      signals: [{ date: "Apr 2026", text: "Hiring: Senior Data Analyst (Product Analytics) — 2 open roles" }, { date: "Mar 2026", text: "Launched 1Password Extended Access Management — new product line" }, { date: "Feb 2026", text: "CTO Nancy Wang joined from Meta — first full quarter in seat" }]
+    },
+    salesforce: {
+      oppName: "1Password — Platform Expansion Q2 2026", stage: "Stage 2 — Value Validation",
+      closeDate: "Jun 30, 2026", lastActivity: "Apr 8, 2026",
+      nextSteps: "Set up exec meeting between Nancy Wang (CTO) and Spenser Skates to validate volume expansion use case. Lauren Attewell managing legal review. Send revised order form by Apr 25.",
+      activities: [{ type: "Call", date: "Apr 8", note: "Discovery with Lauren — expansion interest confirmed, legal review flagged" }, { type: "Email", date: "Mar 28", note: "Sent usage report showing 40% growth in tracked events vs contract tier" }, { type: "Meeting", date: "Mar 15", note: "QBR with Ariana (CSM) + 1Password — expansion path agreed in principle" }]
+    },
+    sixsense: {
+      score: 78, stage: "Decision",
+      personas: ["Product Analytics", "Data Engineering", "C-Suite / Finance"],
+      keywords: ["product analytics platform", "user behavior tracking", "feature adoption metrics", "data warehouse analytics", "volume pricing analytics"],
+      activities: [{ date: "Apr 13", type: "web", label: "Web Visit", text: "Pricing page — 4 visits this week by 3 unique users" }, { date: "Apr 11", type: "content", label: "Content", text: "Downloaded 'Scaling Analytics with Amplitude' enterprise guide" }, { date: "Apr 9", type: "search", label: "Search", text: "Researching 'amplitude enterprise pricing' + 'analytics seat pricing'" }, { date: "Apr 7", type: "web", label: "Web Visit", text: "Customer stories page — focused on security/SaaS case studies" }]
+    },
+    mutiny: {
+      identified: true, lastSeen: "Apr 13, 2026", visits: 7,
+      segment: "High-Growth SaaS — Data-Heavy Teams", persona: "Enterprise Analytics Buyer",
+      pages: [{ url: "/product/analytics", personalization: "Product Analytics for Security SaaS", engagement: "high" }, { url: "/pricing", personalization: "Enterprise Volume Pricing", engagement: "high" }, { url: "/customers/security", personalization: "Security Industry Case Studies", engagement: "med" }],
+      recommendation: "They've hit pricing 4x this week and read the enterprise guide. Lead your next outreach with volume pricing transparency and a side-by-side of current contract vs expansion tier. Reference Okta or Cloudflare as a security-adjacent expansion story."
+    },
+    buyingMap: {
+      focus: ["Nancy Wang", "Akshay Bhargava", "Lauren Attewell"],
+      focusNote: "At Stage 2 you need exec validation (Nancy), a product champion (Akshay), and legal coverage (Lauren) to move forward.",
+      tiers: [
+        { label: "C-Suite / Economic Buyers", people: [
+          { name: "Nancy Wang", title: "Chief Technology Officer", role: "Economic Buyer", status: "target", priority: true, note: "First priority — needs exec intro via Spenser Skates. Not yet connected.", li: "#" },
+          { name: "Jeff Shiner", title: "CEO", role: "Final Approver", status: "unknown", priority: false, note: "May be required for expansion of this size.", li: "#" },
+          { name: "Akshay Bhargava", title: "Chief Product Officer", role: "Champion Candidate", status: "target", priority: true, note: "Product org owns Amplitude usage. Potential champion if engaged.", li: "#" },
+        ]},
+        { label: "Technical / Influencers", people: [
+          { name: "Pedro Canahuati", title: "SVP Engineering", role: "Technical Evaluator", status: "unknown", priority: false, note: "Engineering platform owner. Loop in if technical objections arise.", li: "#" },
+        ]},
+        { label: "Legal / Procurement", people: [
+          { name: "Lauren Attewell", title: "Head of Legal & Admin", role: "Gatekeeper", status: "engaged", priority: true, note: "Actively managing contract review. Relationship is solid.", li: "#" },
+        ]}
+      ]
+    },
+    nextSteps: [
+      { p:1, urgency:"week", type:"call",     title:"Get Nancy Wang (CTO) exec intro via Spenser Skates",    why:"6sense: Decision stage, pricing page hit 4x this week. First full quarter as CTO — prime window to shape her Amplitude view.", who:["Susan","Spenser Skates"], action:"write-email",  cta:"Draft Intro Ask" },
+      { p:2, urgency:"week", type:"email",    title:"Send Lauren Attewell revised order form w/ volume pricing options", why:"Legal review is active. Getting the order form in front of her unblocks contract progress directly.", who:["Susan"], action:"write-email", cta:"Write Email" },
+      { p:3, urgency:"week", type:"linkedin", title:"Connect with Akshay Bhargava (CPO) on LinkedIn",        why:"Product org hit pricing + feature pages multiple times. CPO is the natural product champion — don't leave this uncovered.", who:["Susan"], action:"sequence",    cta:"Build Sequence" },
+      { p:4, urgency:"month",type:"deck",     title:"Build expansion deck: current usage vs expansion tier",  why:"Nancy meeting needs an exec-ready story with ROI clearly laid out before she'll sponsor the expansion.", who:["Susan"], action:"deck",         cta:"Create Deck" },
+    ]
+  },
+
+  "NetScout": {
+    type: "New Logo", stage: "Stage 3",
+    accountSummary: "$200K POC at Stage 3 — highest intent account in the book (88/100). Pamela Jacques (VP Marketing, economic buyer) approval is the gating item. ⚠️ Adobe competitive objection in Ali's inbox needs a response before the exec demo.",
+    linkedin: [
+      { name: "Aliasgar Amin", title: "Director, Digital Experience & Analytics", relevance: "champion", note: "Internal champion — driving the POC. Primary prospect in Outreach.", li: "https://www.linkedin.com/in/aliasgar-amin/" },
+      { name: "Pamela Jacques", title: "VP, Corporate Marketing", relevance: "buyer", note: "Economic buyer — approval is gating per SF notes. Next action: exec brief + pricing conversation.", li: "https://app.zoominfo.com/#/apps/profile/person/17326059451" },
+      { name: "Belinda Yung-Rubke", title: "Global VP, Area, Customer Marketing", relevance: "champion", note: "Data champion — Michael and Don report to her. Key technical sign-off on marketing use cases.", li: "https://app.zoominfo.com/#/apps/profile/person/1679298952" },
+      { name: "Jean Bua", title: "CFO", relevance: "buyer", note: "Controls final budget approval. ZI accuracy score 92 — email verified. Not yet in conversation.", li: "https://app.zoominfo.com/#/apps/profile/person/1265551392" },
+      { name: "Sanjay Munshi", title: "Chief Operating Officer", relevance: "influencer", note: "COO — will care about adoption and operational ROI. ZI accuracy 98.", li: "https://app.zoominfo.com/#/apps/profile/person/1324207783" },
+    ],
+    zoominfo: {
+      company: "NETSCOUT Systems, Inc.", industry: "Networking Software / Cybersecurity", employees: "2,102", hq: "Westford, MA", revenue: "$861M (NASDAQ: NTCT)", funding: "Public — Founded 1984",
+      website: "netscout.com",
+      techStack: [{ name: "Tableau ⚠", type: "competitor" }, { name: "Google Analytics ⚠", type: "competitor" }, { name: "Salesforce", type: "normal" }, { name: "Marketo", type: "normal" }, { name: "AWS", type: "normal" }, { name: "ServiceNow", type: "normal" }],
+      signals: [{ date: "Mar 24 '26", text: "🔥 Hiring surge in Marketing — more open roles than any point in past 12 months (content, digital, social, video). Team is scaling." }, { date: "Mar 23 '26", text: "MWC 2026: DDoS + AI-driven cybersecurity positioning. Darren Anstee quoted in Technology Magazine." }, { date: "Feb 12 '26", text: "Positioning as AI-driven defense platform for 2026 — AI security commentary from Gaurav Mohan." }]
+    },
+    salesforce: {
+      oppName: "NETSCOUT | Land | -", stage: "Stage 3 — Business & Technical Evaluation",
+      closeDate: "Jun 26, 2026", lastActivity: "Apr 14, 2026",
+      nextSteps: "4.2.26 — Commercials + POC scope kick-off call with Ali Amin. Key items to confirm: economic buyer (Pamela — approval is gating), binary success criteria, committed Go/No-Go decision date, full buying committee (Marketing: Michael/Don + IT parallel demos). POC structure: 3-week POC + 90-day opt-out per Ali's request. Next: brief Pamela on pricing, schedule exec demo.",
+      activities: [{ type: "Call", date: "Apr 2", note: "Commercials + POC scope kick-off with Ali. Confirmed 3-week POC + 90-day opt-out structure. Exec demo with Pamela TBD." }, { type: "Demo", date: "Mar 5", note: "Follow-up demo to finish features + demo of current analytics flow with Ali's team." }, { type: "Demo", date: "Mar 4", note: "Initial POC demo — Ali confirmed strong interest, escalating to Pamela for exec alignment." }]
+    },
+    sixsense: {
+      score: 88, stage: "Purchase",
+      personas: ["Product Management", "Data & Analytics", "Marketing / CMO"],
+      keywords: ["product analytics enterprise", "user journey analytics", "amplitude vs tableau", "digital experience analytics", "POC analytics platform"],
+      activities: [{ date: "Apr 14", type: "web", label: "Web Visit", text: "ROI calculator page — 2 sessions today from Westford IP" }, { date: "Apr 12", type: "content", label: "Content", text: "Watched 'Amplitude for Enterprise' webinar (full 47 min)" }, { date: "Apr 11", type: "search", label: "Search", text: "Comparing 'amplitude vs tableau for product analytics'" }, { date: "Apr 9", type: "web", label: "Web Visit", text: "Security & compliance page — 3 unique visitors" }]
+    },
+    mutiny: {
+      identified: true, lastSeen: "Apr 14, 2026", visits: 12,
+      segment: "Enterprise New Eval — High Urgency", persona: "Enterprise POC Stage",
+      pages: [{ url: "/product/data-management", personalization: "Enterprise Data Governance", engagement: "high" }, { url: "/roi-calculator", personalization: "Enterprise ROI Calculator", engagement: "high" }, { url: "/security", personalization: "Enterprise Security & Compliance", engagement: "high" }],
+      recommendation: "Most engaged account in your book — 12 website visits, full webinar watch. Pamela's team hit the ROI calculator today. Send exec brief TODAY with ROI estimate pre-filled for NetScout's scale. Strike while hot."
+    },
+    buyingMap: {
+      focus: ["Pamela Jacques", "Aliasgar Amin", "Belinda Yung-Rubke"],
+      focusNote: "POC stage requires your champion (Ali) driving evaluation, Belinda signing off on marketing use cases, and Pamela (VP Corp Marketing) aligned as economic buyer before you can advance.",
+      tiers: [
+        { label: "Economic Buyer / Exec Sponsors", people: [
+          { name: "Pamela Jacques", title: "VP, Corporate Marketing", role: "Economic Buyer", status: "target", priority: true, note: "Approval is gating per SF notes. Needs exec brief + pricing conversation. ZoomInfo confirmed contact.", li: "https://app.zoominfo.com/#/apps/profile/person/17326059451" },
+          { name: "Jean Bua", title: "CFO", role: "Budget Holder", status: "unknown", priority: false, note: "Final budget sign-off. ZI accuracy 92, email verified. Not yet engaged.", li: "https://app.zoominfo.com/#/apps/profile/person/1265551392" },
+          { name: "Sanjay Munshi", title: "Chief Operating Officer", role: "Influencer", status: "unknown", priority: false, note: "Will weigh in on operational ROI and adoption plan.", li: "https://app.zoominfo.com/#/apps/profile/person/1324207783" },
+        ]},
+        { label: "Champion / Evaluation Team", people: [
+          { name: "Aliasgar Amin", title: "Director, Digital Experience & Analytics", role: "Champion", status: "engaged", priority: true, note: "Primary prospect in Outreach. Driving the POC — confirmed 3-week structure + 90-day opt-out.", li: "https://www.linkedin.com/in/aliasgar-amin/" },
+          { name: "Belinda Yung-Rubke", title: "Global VP, Area, Customer Marketing", role: "Technical Sign-off", status: "engaged", priority: true, note: "Data champion. Michael and Don report to her. Key gatekeeper for marketing analytics use cases.", li: "https://app.zoominfo.com/#/apps/profile/person/1679298952" },
+        ]}
+      ]
+    },
+    nextSteps: [
+      { p:1, urgency:"today", type:"email",   title:"Send Pamela Jacques (VP Corp Marketing) exec brief — do this TODAY",      why:"She's the economic buyer gating the POC. Intent is high (88 score), and ZoomInfo confirms NetScout is on a marketing hiring surge right now — perfect hook for the ROI conversation.", who:["Susan"], action:"write-email", cta:"Write Email Now" },
+      { p:2, urgency:"week",  type:"deck",    title:"Build POC success deck for Pamela's exec sponsorship",   why:"CMO sponsorship requires polished enterprise materials. Ali can't advance the POC without exec backing from Pamela.", who:["Susan"], action:"deck",       cta:"Create Deck" },
+      { p:3, urgency:"week",  type:"meeting", title:"Schedule Belinda's team follow-up demo (week of Apr 21)", why:"POC success criteria set — demo is the next gate for technical buy-in before Pamela signs off.", who:["Susan","Becca Abusharkh"], action:"write-email", cta:"Draft Invite" },
+      { p:4, urgency:"week",  type:"call",    title:"Eddie: prep technical architecture doc by Apr 18",       why:"POC requires this for Belinda's team to validate the integration plan. Hard dependency on timeline.", who:["Susan","Eddie Chiang"], action:"sfnotes", cta:"Log in SF" },
+    ],
+    slackContext: `From Slack (#ext-netscout-amplitude + internal DMs):
+• External channel #ext-netscout-amplitude active with Ali and Eddie — Eddie shared ZoomInfo WebSights data governance doc directly with Ali
+• Ali explicitly emailed requesting Becca lead the IT team demo: "the IT team requirements are very specific and nuanced, and I would highly recommend Becca being on this call"
+• ⚠️ Adobe rep sent Ali a document arguing "Amplitude is not a good match for our requirements" — Ali forwarded it to Susan asking for her response. This objection needs to be addressed directly.
+• SF pipeline hygiene flag: NetScout Next Steps were last updated 2026-03-05 — flagged as stale by pipeline ops`,
+    gmailContext: `From Gmail:
+• IT demo took place Apr 8 — Harsha Silina (NetScout IT) + 12 attendees; Shawn shared Granola notes for that meeting
+• Active email thread with Ali about IT demo scheduling (Harsha Silina coordinating); Susan confirmed Becca will lead
+• Amplitude + NETSCOUT workspace visits logged Apr 7 + Apr 11 — anonymous visitor activity`,
+    granolaContext: `From your Granola meeting notes:
+• Pamela (VP Marketing) reports directly to CEO and has veto power — "If she doesn't like something, it's an instant no"
+• Ali's demo coaching: put Becca front and center for the Pamela demo; lead with AI capabilities (CEO has a company-wide AI mandate and told Ali the current stack is "getting outdated"); frame around gap analysis, NOT ROI — "sales never credits marketing anyway"
+• ZoomInfo integration is NON-NEGOTIABLE — currently 20% match rate; account-level journey analysis (AT&T vs Verizon on-site behavior) is Pamela's core use case
+• Bot filtering is a major pain point: 150K bot sessions/month
+• POC success criteria: API delta ≤10-15%, session count parity (~120-150K sessions/month), ZoomInfo match rate
+• Vendor approval process: estimated 4-6 weeks minimum; AI committee review needed for PII (workaround: opt out of AI features initially to accelerate)
+• MouseFlow contract locked until Feb 2027; budget pressure — GA4 is free, must justify spend vs. Adobe Analytics
+• Pamela demo targeting the week after Ali's pricing review with her; onsite at Waltham HQ floated as an option`
+  },
+
+  "Tawkify": {
+    type: "New Logo", stage: "Stage 3",
+    accountSummary: "$75K deal in legal — MSA in redlines with Doris. ⚡ Call with Doris happened TODAY, Kaia summary just landed. Data infrastructure is the blockers (Leo stretched thin). Close target Jun 26, CEO countersign needed.",
+    linkedin: [
+      { name: "Doris Lin", title: "Head of Product", relevance: "champion", note: "Main contact — driving the deal. High urgency, close date Jun 26.", li: "#" },
+      { name: "Kenneth Shaw", title: "CEO & Co-Founder", relevance: "buyer", note: "Co-founder, likely final approver for $75K contract.", li: "#" },
+      { name: "Michelle Jacoby", title: "COO", relevance: "buyer", note: "Operational leader — owns vendor decisions alongside Doris.", li: "#" },
+    ],
+    zoominfo: {
+      company: "Tawkify", industry: "Consumer Marketplace / Matchmaking", employees: "~80", hq: "San Francisco, CA", revenue: "$15–30M est.", funding: "Series B — $12M",
+      website: "tawkify.com",
+      techStack: [{ name: "Mixpanel ⚠", type: "competitor" }, { name: "Stripe", type: "normal" }, { name: "HubSpot", type: "normal" }, { name: "Segment", type: "normal" }, { name: "AWS", type: "normal" }],
+      signals: [{ date: "Apr 2026", text: "In late-stage Amplitude negotiation — MSA in redlines" }, { date: "Mar 2026", text: "Hired Head of Growth — signals investment in conversion optimization" }, { date: "Feb 2026", text: "Mixpanel contract up for renewal Q2 2026 — displacement timing now" }]
+    },
+    salesforce: {
+      oppName: "Tawkify — New Logo $75K", stage: "Stage 3 — Legal / Negotiation",
+      closeDate: "Jun 26, 2026", lastActivity: "Apr 11, 2026",
+      nextSteps: "MSA in redlines with Doris. Confirm final scope (Analytics + Session Replay). Legal to review by Apr 18. Target signature Jun 20 — 1 week buffer before close date.",
+      activities: [{ type: "Contract", date: "Apr 11", note: "Sent MSA + order form to Doris for legal review" }, { type: "Call", date: "Apr 4", note: "Negotiation — agreed $75K, 12-month, Analytics + Session Replay" }, { type: "Demo", date: "Mar 28", note: "Final demo with Doris + CEO Kenneth — strong close signal" }]
+    },
+    sixsense: {
+      score: 73, stage: "Decision",
+      personas: ["Product Management", "Executive / C-Suite"],
+      keywords: ["amplitude pricing", "session replay analytics", "mixpanel alternative", "product analytics startup"],
+      activities: [{ date: "Apr 12", type: "web", label: "Web Visit", text: "Session replay product page — 2 visits from SF IP" }, { date: "Apr 10", type: "content", label: "Content", text: "Read 'Replacing Mixpanel with Amplitude' migration guide" }, { date: "Apr 8", type: "search", label: "Search", text: "Searching 'amplitude session replay pricing'" }]
+    },
+    mutiny: {
+      identified: true, lastSeen: "Apr 12, 2026", visits: 8,
+      segment: "Mid-Market Startup — Displacement Eval", persona: "Startup Product & Exec Buyer",
+      pages: [{ url: "/product/session-replay", personalization: "Session Replay for Consumer Apps", engagement: "high" }, { url: "/pricing", personalization: "Startup & Growth Pricing", engagement: "high" }, { url: "/vs/mixpanel", personalization: "Amplitude vs Mixpanel", engagement: "high" }],
+      recommendation: "They're reading the Mixpanel migration guide and checking Session Replay pricing. Deal is in legal — but reinforce confidence. Send Doris a 1-pager on migration timeline + what Mixpanel customers say post-switch. Removes last-minute cold feet."
+    },
+    buyingMap: {
+      focus: ["Doris Lin", "Kenneth Shaw"],
+      focusNote: "Stage 3 — deal is in legal. Doris is your champion driving it over the line. Kenneth (CEO) needs to countersign. Keep both warm and unblock anything immediately.",
+      tiers: [
+        { label: "Executive / Final Approvers", people: [
+          { name: "Kenneth Shaw", title: "CEO & Co-Founder", role: "Final Approver", status: "target", priority: true, note: "Co-founder sign-off required. Warm from final demo — send brief check-in.", li: "#" },
+          { name: "Michelle Jacoby", title: "COO", role: "Operational Sign-off", status: "unknown", priority: false, note: "May be looped into contract review — not yet engaged directly.", li: "#" },
+        ]},
+        { label: "Champion / Deal Driver", people: [
+          { name: "Doris Lin", title: "Head of Product", role: "Champion", status: "engaged", priority: true, note: "Driving deal through legal. High urgency — check in every 3 days max.", li: "#" },
+        ]}
+      ]
+    },
+    nextSteps: [
+      { p:1, urgency:"week",  type:"email",   title:"Check in with Doris on MSA redlines — every 3 days",    why:"Stage 3 in legal. 73 intent, still reading migration guides. Check in keeps momentum and removes blockers before they stall.", who:["Susan"], action:"write-email", cta:"Write Check-in" },
+      { p:2, urgency:"week",  type:"email",   title:"Send Doris: Mixpanel → Amplitude migration 1-pager",    why:"Mutiny shows she's reading migration content. Remove last-minute cold feet with a clear migration timeline + customer quote.", who:["Susan"], action:"write-email", cta:"Draft 1-Pager" },
+      { p:3, urgency:"week",  type:"call",    title:"Prep Kenneth Shaw (CEO) countersign package",            why:"Stage 3 — CEO countersign required. Getting the package ready removes a delay risk at the finish line.", who:["Susan"], action:"deck",       cta:"Prep Package" },
+    ],
+    slackContext: `From Slack (#ext-amplitude-tawkify + internal DMs):
+• External channel #ext-amplitude-tawkify exists — created for Tawkify/Arrows + Amplitude planning
+• Tawkify's stated stack vision: BigQuery as single source of truth, Looker as BI tool, Amplitude as behavioral analytics layer
+• Biggest pain point: manual marketing campaign tracking through Google Sheets
+• Current tools: Mixpanel, Optimizely, Segment, GTM
+• Key funnels to track: onboarding (both platforms), profile completion, new commerce conversion
+• SF hygiene: Tawkify next steps also flagged as stale in pipeline hygiene report`,
+    gmailContext: `From Gmail:
+• ⚡ Call with Doris happened TODAY (Apr 14, 11am-11:20am PDT) — Outreach Kaia summary just landed in inbox. Read it before any follow-up.
+• Tawkify Assistant joined the Zoom — recording likely available`,
+    granolaContext: `From your Granola meeting notes:
+• Doris is the champion; Leo (data engineer) is stretched thin supporting 3 areas — data infrastructure is the real blocker
+• Chicken-and-egg situation: need data investment to show value, need buy-in to invest
+• Previous Amplitude account hit 50K MTU limit (Nov 2025) — address this proactively in any conversation
+• Susan is sending Segment integration guide + AI quick-start tool; Doris to attempt Segment connection independently`
+  },
+
+  "OnXMaps": {
+    type: "Expansion", stage: "Stage 2",
+    accountSummary: "Good expansion candidate — onsite being planned (target core week). Nate Crook just introduced Preethi Ramani (new CPO) to Amplitude EAB. 5 draft outreach emails to team members are ready to send. AI feature adoption at 30% vs 50% target is the gap to close.",
+    linkedin: [
+      { name: "Abby Minrath", title: "Director, Product Analytics", relevance: "champion", note: "Main contact — deeply aligned on expansion value.", li: "#" },
+      { name: "Chris Borg", title: "VP Data & Analytics", relevance: "buyer", note: "Owns the analytics budget. Needs a compelling story.", li: "#" },
+      { name: "Preethi Ramani", title: "Chief Product Officer (new)", relevance: "buyer", note: "New CPO — first 90 days. Priority exec target. Nate Crook connection.", li: "#" },
+      { name: "Eric Siegfried", title: "CEO", relevance: "influencer", note: "Founder/CEO — onsite planned, validates strategic direction.", li: "#" },
+    ],
+    zoominfo: {
+      company: "onX Maps", industry: "Outdoor Recreation / Mobile Apps", employees: "~250", hq: "Missoula, MT", revenue: "$80M+ est.", funding: "Private — PE-backed",
+      website: "onxmaps.com",
+      techStack: [{ name: "Amplitude ✓", type: "amplitude" }, { name: "Snowflake", type: "normal" }, { name: "dbt", type: "normal" }, { name: "Looker", type: "normal" }, { name: "Braze", type: "normal" }, { name: "AppsFlyer", type: "normal" }],
+      signals: [{ date: "Apr 2026", text: "Onsite visit planning underway — Eric + Preethi Ramani (new CPO) expected" }, { date: "Mar 2026", text: "OnX Backcountry product in beta — new analytics use case" }, { date: "Feb 2026", text: "Preethi Ramani joined as CPO — reviewing product analytics stack" }]
+    },
+    salesforce: {
+      oppName: "OnXMaps — Platform Expansion (New Products)", stage: "Stage 2 — Discovery",
+      closeDate: "Jul 31, 2026", lastActivity: "Apr 7, 2026",
+      nextSteps: "Schedule onsite with Abby + Chris Borg + Preethi Ramani. Nate Crook to do exec intro with Preethi before visit. Prepare product expansion use case deck for Backcountry + Hunt. Target onsite in May.",
+      activities: [{ type: "Call", date: "Apr 7", note: "Check-in with Abby — onsite confirmed for late May, Preethi open to meeting" }, { type: "Email", date: "Mar 31", note: "Sent new product analytics overview — Abby shared with Chris Borg" }, { type: "Meeting", date: "Mar 20", note: "EBR with Ariana (CSM) + onX — expansion path clear" }]
+    },
+    sixsense: {
+      score: 62, stage: "Consideration",
+      personas: ["Product Analytics", "Executive / CPO"],
+      keywords: ["amplitude new products", "multi-product analytics", "outdoor app analytics", "mobile analytics platform"],
+      activities: [{ date: "Apr 10", type: "web", label: "Web Visit", text: "Multi-product analytics page — Preethi's team browsing" }, { date: "Apr 7", type: "content", label: "Content", text: "Read 'Scaling Analytics Across Product Lines' guide" }, { date: "Apr 4", type: "web", label: "Web Visit", text: "Amplitude for mobile apps page — 2 visits" }]
+    },
+    mutiny: {
+      identified: true, lastSeen: "Apr 10, 2026", visits: 5,
+      segment: "Current Customer — Expansion Candidate", persona: "Multi-Product Analytics Buyer",
+      pages: [{ url: "/product/multi-product", personalization: "Analytics Across Product Lines", engagement: "high" }, { url: "/customers/mobile", personalization: "Mobile-First Success Stories", engagement: "med" }, { url: "/product/experiment", personalization: "Experimentation for New Products", engagement: "low" }],
+      recommendation: "Preethi is browsing multi-product content — she's evaluating whether to standardize analytics across Hunt, Backcountry, and Fishing. Lead the onsite with a live demo across all 3 products. Show unified dashboards as the headline story."
+    },
+    buyingMap: {
+      focus: ["Preethi Ramani", "Chris Borg", "Abby Minrath"],
+      focusNote: "Expansion needs CPO buy-in (Preethi — new in seat, prime window), budget owner alignment (Chris), and champion enablement (Abby). Onsite is your catalyst.",
+      tiers: [
+        { label: "Executive Tier", people: [
+          { name: "Preethi Ramani", title: "Chief Product Officer (new)", role: "Economic Buyer", status: "target", priority: true, note: "New CPO — first 90 days. Prime window for influence. Nate Crook intro key.", li: "#" },
+          { name: "Eric Siegfried", title: "CEO", role: "Exec Sponsor", status: "target", priority: false, note: "Will attend onsite — relationship builder. Not a blocker but great for deal gravity.", li: "#" },
+        ]},
+        { label: "Budget / Analytics Leadership", people: [
+          { name: "Chris Borg", title: "VP Data & Analytics", role: "Budget Owner", status: "target", priority: true, note: "Owns the analytics budget. Abby has shared deck with him — needs direct outreach.", li: "#" },
+        ]},
+        { label: "Champion", people: [
+          { name: "Abby Minrath", title: "Director, Product Analytics", role: "Champion", status: "engaged", priority: true, note: "Your inside champion. Keep her enabled and ahead of Preethi's questions.", li: "#" },
+        ]}
+      ]
+    },
+    nextSteps: [
+      { p:1, urgency:"week",  type:"meeting", title:"Send calendar hold for May onsite (Abby + Chris + Preethi)", why:"Onsite is confirmed in principle — locking the date makes it real for all three stakeholders and protects your timeline.", who:["Susan"], action:"write-email", cta:"Draft Invite" },
+      { p:2, urgency:"week",  type:"call",    title:"Nate Crook: exec intro with Preethi Ramani (new CPO)",   why:"New CPO in first 90 days — this is the highest-leverage moment to shape her Amplitude story. Nate is the right connector.", who:["Susan","Nate Crook"], action:"write-email", cta:"Draft Intro Ask" },
+      { p:3, urgency:"month", type:"deck",    title:"Build multi-product expansion deck for onsite",           why:"Hunt + Backcountry + Fishing — needs a unified analytics vision for Preethi. This is the centerpiece of the onsite.", who:["Susan"], action:"deck", cta:"Create Deck" },
+      { p:4, urgency:"week",  type:"linkedin","title":"Direct outreach to Chris Borg (VP Data) before onsite", why:"Budget owner needs a direct touch before onsite, not just Abby relaying messages. Build the relationship now.", who:["Susan"], action:"sequence", cta:"Draft LinkedIn" },
+    ],
+    slackContext: `From Slack:
+• Susan added onXMaps (org id 22304) to #epd-gtm-outreach for product-led outreach enablement
+• Brett Eisner available to help prep for onsite — asked for access to a sheet to get familiar`,
+    gmailContext: `From Gmail:
+• ⚡ 5 draft emails sitting unsent to onXMaps contacts: Maria Holden (Ford partnership analytics), Karlie Hays (Fish Dashboard), Toni Kljucevic (Experiment Analysis notebook), Derrick Nguyen (running experiments but not in Amplitude Experiment), Sophie Dilzell (Full Map vs MVP test) — these are ready to send
+• ⚡ Nate Crook already emailed Preethi Ramani (new CPO) Apr 13 about the Amplitude Executive Advisory Board 2026 in San Diego — exec intro is in motion`,
+    granolaContext: `From your Granola meeting notes:
+• Only 30% of active users are using AI features vs. a 50% target — configure AI Controls (org-level + project-level context, event taxonomy/data dictionary uploads), especially important given onX's complex subscription event definitions
+• Onsite plan: model after Ariana's half-day format (general intro + AI accelerator + team-specific sessions); target an onX "core week" for maximum attendance; key to get Chris Borg there
+• Slack integration needs a refresh since the AI rollout — Ariana sent the link to Abby to follow up with IT
+• Next monthly agenda: align around AI roadmap + agent demos, position it for Chris's attendance`
+  },
+
+  "dbt Labs": {
+    type: "Expansion", stage: "Stage 2",
+    accountSummary: "Not ready for expansion pitch yet — usage at ~45%, need 60%+ before commercial push. Ariana (CSM) owns this track. Monitor for dbt Cloud v2 launch as the natural trigger. Bi-weekly sync with Kate Doebler is active.",
+    linkedin: [
+      { name: "Kate Doebler", title: "Head of Data & Analytics", relevance: "champion", note: "Main contact — usage depth needs to increase before expansion pitch.", li: "#" },
+      { name: "Tristan Handy", title: "CEO & Founder", relevance: "buyer", note: "Founder-led — likely involved in any significant platform expansion.", li: "#" },
+      { name: "Drew Banin", title: "Chief Product Officer", relevance: "influencer", note: "Product leader — owns analytics use case within dbt Cloud.", li: "#" },
+    ],
+    zoominfo: {
+      company: "dbt Labs", industry: "Data Infrastructure / Dev Tools", employees: "~400", hq: "Philadelphia, PA (Remote)", revenue: "$100M+ ARR est.", funding: "Series D — $222M",
+      website: "getdbt.com",
+      techStack: [{ name: "Amplitude ✓", type: "amplitude" }, { name: "Snowflake", type: "normal" }, { name: "Looker", type: "normal" }, { name: "Segment", type: "normal" }, { name: "Linear", type: "normal" }, { name: "Slack", type: "normal" }],
+      signals: [{ date: "Apr 2026", text: "dbt Cloud v2 launch — new product surface, potential new analytics use cases" }, { date: "Mar 2026", text: "Hiring: 4 Product Managers across core product + developer experience" }, { date: "Feb 2026", text: "Deepened Snowflake partnership — data infrastructure investment signals" }]
+    },
+    salesforce: {
+      oppName: "dbt Labs — Analytics Expansion", stage: "Stage 2 — Usage Review",
+      closeDate: "Aug 31, 2026", lastActivity: "Mar 25, 2026",
+      nextSteps: "Hold until usage improves (Ariana's CSM review: target 60%+ feature adoption). Check in with Kate in May. Ariana to flag when threshold is hit.",
+      activities: [{ type: "Call", date: "Mar 25", note: "Sync with Ariana — usage at 45%, not ready for expansion yet" }, { type: "Email", date: "Mar 10", note: "Check-in with Kate — positive but no urgency" }, { type: "Meeting", date: "Feb 28", note: "QBR — adoption gaps identified in Experiment + Pathfinder" }]
+    },
+    sixsense: {
+      score: 44, stage: "Awareness",
+      personas: ["Data Engineering", "Product Management"],
+      keywords: ["amplitude features", "analytics adoption", "product analytics best practices"],
+      activities: [{ date: "Apr 5", type: "web", label: "Web Visit", text: "Amplitude Academy page — 2 visits from Kate's team" }, { date: "Mar 28", type: "content", label: "Content", text: "Read 'Getting More from Amplitude' best practices guide" }]
+    },
+    mutiny: {
+      identified: true, lastSeen: "Apr 5, 2026", visits: 3,
+      segment: "Current Customer — Nurture / Adoption", persona: "Customer Success Expansion",
+      pages: [{ url: "/academy", personalization: "Analytics Maturity Resources", engagement: "med" }, { url: "/product/experiment", personalization: "Experimentation Platform", engagement: "low" }],
+      recommendation: "Low urgency signal — this account needs adoption work before expansion pitch. Ariana's CSM track is the right play. Check back in May when usage hopefully hits 60%+. Don't push commercially yet."
+    },
+    buyingMap: {
+      focus: ["Kate Doebler"],
+      focusNote: "Not ready for expansion commercially. Focus entirely on Kate — help her drive adoption and become the internal Amplitude champion before any commercial conversation.",
+      tiers: [
+        { label: "Executive Tier", people: [
+          { name: "Tristan Handy", title: "CEO & Founder", role: "Final Approver", status: "unknown", priority: false, note: "Founder-led — will be involved for large expansion. Not time yet.", li: "#" },
+          { name: "Drew Banin", title: "Chief Product Officer", role: "Influencer", status: "unknown", priority: false, note: "Product leader — could be an expansion champion later. Not yet engaged.", li: "#" },
+        ]},
+        { label: "Current Contact", people: [
+          { name: "Kate Doebler", title: "Head of Data & Analytics", role: "Champion", status: "engaged", priority: true, note: "Only active contact. Usage at 45% — help her improve adoption first.", li: "#" },
+        ]}
+      ]
+    },
+    nextSteps: [
+      { p:1, urgency:"month", type:"call",  title:"Wait for Ariana's CSM flag: usage ≥60% before any commercial push", why:"Premature expansion pitch at 45% usage will backfire. Ariana owns this track — let her do the work.", who:["Ariana Henck (CSM)"], action:"sfnotes", cta:"Log Note" },
+      { p:2, urgency:"month", type:"email", title:"Watch dbt Cloud v2 launch — reach out when new analytics use cases emerge", why:"New product surface = new analytics complexity = natural expansion hook. Monitor and be first to connect the dots.", who:["Susan"], action:"write-email", cta:"Draft Check-in" },
+    ],
+    slackContext: `From Slack: No dbt Labs-specific Slack threads found in recent search.`,
+    gmailContext: `From Gmail:
+• Active bi-weekly sync thread with Kate Doebler (dbt Labs) — Ariana Henck is the primary Amplitude contact; Lottoland troubleshooting situation being handled (Apr 13)
+• Susan CC'd on the thread — Ariana managing day-to-day`,
+    granolaContext: `From your Granola meeting notes:
+• No specific dbt Labs meeting notes found yet — usage data and CSM signals from Ariana are the primary intel source`
+  },
+
+  "1st Dibs": {
+    type: "New Logo", stage: "Stage 2",
+    accountSummary: "Good prospect — Isaac Fox is a strong champion (ex-Reverb, knows Amplitude well). Core pain: no self-serve analytics, everything goes through an analyst queue. Boss on vacation ~2 weeks, target full demo end of April. Heap renewal in Q3 creates displacement urgency.",
+    linkedin: [
+      { name: "Isaac Fox", title: "VP Product", relevance: "champion", note: "Main contact — engaged in discovery. Need exec buy-in above Isaac.", li: "#" },
+      { name: "David Rosenblatt", title: "CEO", relevance: "buyer", note: "CEO — needs to validate the investment case.", li: "#" },
+      { name: "Tom Etsy", title: "CTO", relevance: "buyer", note: "Technical decision maker — owns platform roadmap.", li: "#" },
+    ],
+    zoominfo: {
+      company: "1stDibs", industry: "Luxury E-Commerce / Marketplace", employees: "~500", hq: "New York, NY", revenue: "$120M (NASDAQ: DIBS)", funding: "Public",
+      website: "1stdibs.com",
+      techStack: [{ name: "Heap ⚠", type: "competitor" }, { name: "Google Analytics ⚠", type: "competitor" }, { name: "Salesforce", type: "normal" }, { name: "Segment", type: "normal" }, { name: "Braze", type: "normal" }, { name: "AWS", type: "normal" }],
+      signals: [{ date: "Apr 2026", text: "Heap contract coming up for renewal Q3 2026 — displacement window opening" }, { date: "Mar 2026", text: "New VP of Product Analytics hired — Isaac Fox's team expanding" }, { date: "Feb 2026", text: "Launched AI-powered search — new product analytics use case" }]
+    },
+    salesforce: {
+      oppName: "1stDibs — New Logo Evaluation", stage: "Stage 2 — Discovery",
+      closeDate: "Sep 30, 2026", lastActivity: "Apr 9, 2026",
+      nextSteps: "Brett Eisner (overlay) to land exec meeting with David Rosenblatt. Isaac Fox to share analytics stack audit by Apr 22. Build ROI case around conversion improvement before next meeting.",
+      activities: [{ type: "Call", date: "Apr 9", note: "Discovery with Isaac — Heap limitations confirmed, interest in experimentation" }, { type: "Email", date: "Apr 1", note: "Sent competitive comparison: Amplitude vs Heap" }, { type: "Meeting", date: "Mar 20", note: "Intro — identified pain around experimentation + funnel analytics" }]
+    },
+    sixsense: {
+      score: 65, stage: "Consideration",
+      personas: ["Product Analytics", "Executive / CEO"],
+      keywords: ["heap alternative", "product analytics for ecommerce", "experimentation platform", "amplitude vs heap"],
+      activities: [{ date: "Apr 11", type: "search", label: "Search", text: "Searching 'heap vs amplitude comparison' + 'heap alternative'" }, { date: "Apr 9", type: "web", label: "Web Visit", text: "Experimentation product page — 3 visits from NYC IP" }, { date: "Apr 7", type: "content", label: "Content", text: "Read 'Heap Migration to Amplitude' customer story" }]
+    },
+    mutiny: {
+      identified: true, lastSeen: "Apr 11, 2026", visits: 6,
+      segment: "Heap Displacement — High Consideration", persona: "E-Commerce Product Buyer",
+      pages: [{ url: "/vs/heap", personalization: "Amplitude vs Heap Comparison", engagement: "high" }, { url: "/product/experiment", personalization: "Experimentation for Marketplaces", engagement: "high" }, { url: "/customers/ecommerce", personalization: "E-Commerce Case Studies", engagement: "med" }],
+      recommendation: "They're actively researching Heap alternatives and reading the migration story. The Heap renewal window is Q3 — but they're researching now. Get in front of Isaac with a live demo of Experiment + a migration estimate. The timing couldn't be better."
+    },
+    buyingMap: {
+      focus: ["Isaac Fox", "David Rosenblatt"],
+      focusNote: "Need to expand beyond Isaac — executive buy-in from David (CEO) is the blocker. Brett Eisner (overlay) is your lever to get that intro. Make that happen this week.",
+      tiers: [
+        { label: "C-Suite / Exec", people: [
+          { name: "David Rosenblatt", title: "CEO", role: "Economic Buyer", status: "target", priority: true, note: "Not yet engaged. Brett Eisner overlay should facilitate intro. Critical.", li: "#" },
+          { name: "Tom Etsy", title: "CTO", role: "Technical Decision Maker", status: "unknown", priority: false, note: "Owns platform roadmap — should be looped in after exec alignment.", li: "#" },
+        ]},
+        { label: "Champion", people: [
+          { name: "Isaac Fox", title: "VP Product", role: "Champion", status: "engaged", priority: true, note: "Your champion — engaged in discovery. Needs exec backing above him.", li: "#" },
+        ]}
+      ]
+    },
+    nextSteps: [
+      { p:1, urgency:"week",  type:"call",    title:"Brett Eisner: facilitate David Rosenblatt (CEO) intro this week", why:"Exec buy-in is the #1 blocker. 65 intent, Heap renewal in Q3. If you don't get above Isaac soon, this deal drags to Q4.", who:["Susan","Brett Eisner"], action:"write-email", cta:"Draft Ask" },
+      { p:2, urgency:"week",  type:"email",   title:"Follow up with Isaac Fox — analytics stack audit due Apr 22", why:"The audit is the foundation of your business case. It's late — send a nudge today.", who:["Susan"], action:"write-email", cta:"Write Follow-up" },
+      { p:3, urgency:"week",  type:"deck",    title:"Build Heap displacement one-pager + ROI estimate",           why:"They're searching 'heap alternative' and Heap renewal is Q3. They need a reason to move now — give them a compelling number.", who:["Susan"], action:"deck", cta:"Create One-Pager" },
+      { p:4, urgency:"month", type:"event",   title:"Invite Isaac + David to upcoming Amplitude event or exec dinner", why:"Executive relationships get built in person. An event is a low-pressure way to get David Rosenblatt into the Amplitude ecosystem.", who:["Susan","Brett Eisner"], action:"event", cta:"Draft Invite" },
+    ],
+    slackContext: `From Slack: No 1stDibs-specific Slack threads found in recent search.`,
+    gmailContext: `From Gmail:
+• Active email thread "Re: Amplitude <> 1stdibs" — Susan following up with Jodi Oprandy; Jodi appears hesitant ("Understand your hesitation"). Zach Gould (Amplitude) CC'd.
+• Boss is on vacation — Isaac confirmed as main active contact`,
+    granolaContext: `From your Granola meeting notes:
+• Isaac Fox came from Reverb where he used Amplitude heavily — he's a known buyer and internal advocate
+• Core pain: no self-serve analytics at 1stDibs; all requests go through an analyst queue — this is the primary wedge
+• Demo targets: conversion funnels, user journeys, reactivation, retention
+• Next step: 15-30 min pre-demo sync with Isaac + tech counterpart before full demo
+• Boss is on vacation ~2 weeks — target full demo for end of April`
+  },
+
+  "Farmer's Dog": {
+    type: "New Logo", stage: "Stage 0",
+    accountSummary: "Cold outreach territory — no contact yet. DTC subscription brand on Mixpanel, growing fast (Series D, $168M). Best entry: Brett Podolsky (Co-Founder) via LinkedIn displacement angle, or Amelia Schroeder (Head of Product) as the analytics day-to-day owner.",
+    linkedin: [
+      { name: "Brett Podolsky", title: "Co-Founder & President", relevance: "buyer", note: "Co-founder — no contact yet. Good target for initial outreach.", li: "#" },
+      { name: "Jonathan Regev", title: "CEO & Co-Founder", relevance: "buyer", note: "CEO — early stage, no engagement yet.", li: "#" },
+      { name: "Amelia Schroeder", title: "Head of Product", relevance: "influencer", note: "Likely owns analytics + experimentation. Cold outreach target.", li: "#" },
+    ],
+    zoominfo: {
+      company: "The Farmer's Dog", industry: "DTC / Pet Food Subscription", employees: "~500", hq: "New York, NY", revenue: "$100M+ est.", funding: "Series D — $168M",
+      website: "thefarmersdog.com",
+      techStack: [{ name: "Mixpanel ⚠", type: "competitor" }, { name: "Segment", type: "normal" }, { name: "Braze", type: "normal" }, { name: "Snowflake", type: "normal" }, { name: "Looker", type: "normal" }, { name: "Stripe", type: "normal" }],
+      signals: [{ date: "Mar 2026", text: "Hiring: Growth PM + Data Analyst roles — product analytics investment" }, { date: "Feb 2026", text: "Expanded TV advertising — new acquisition channels, analytics complexity growing" }, { date: "Jan 2026", text: "Launched cat food product line — new user segment to analyze" }]
+    },
+    salesforce: {
+      oppName: "Farmer's Dog — Prospecting (Stage 0)", stage: "Stage 0 — No Active Convo",
+      closeDate: "TBD", lastActivity: "N/A",
+      nextSteps: "No contact established. Research exec contacts at Head of Product + Data level. Identify Mixpanel pain points. Plan cold outreach targeting Brett Podolsky or Head of Product via LinkedIn.",
+      activities: [{ type: "Note", date: "Apr 2026", note: "Added to book — Mixpanel displacement identified as core angle" }]
+    },
+    sixsense: {
+      score: 41, stage: "Awareness",
+      personas: ["Product Management", "Growth / Marketing"],
+      keywords: ["mixpanel pricing", "product analytics alternatives", "subscription analytics"],
+      activities: [{ date: "Apr 6", type: "web", label: "Web Visit", text: "Amplitude home page — 1 visit from NYC IP" }, { date: "Mar 30", type: "search", label: "Search", text: "Searching 'mixpanel pricing 2026'" }]
+    },
+    mutiny: {
+      identified: false, lastSeen: null, visits: 1,
+      segment: "Unknown — Early Stage", persona: "Not yet identified",
+      pages: [{ url: "/", personalization: "Homepage (generic)", engagement: "low" }],
+      recommendation: "Not yet identified on website and minimal intent signal. This is a cold account. Best angle: cold LinkedIn outreach to Brett Podolsky referencing Mixpanel pricing pain + Farmer's Dog growth trajectory. Mention DTC brands like Daily Harvest or Hungryroot as similar wins."
+    },
+    buyingMap: {
+      focus: ["Brett Podolsky"],
+      focusNote: "Stage 0 — no contacts established yet. Start with Brett (President) or Head of Product via cold LinkedIn outreach. Identify a champion before anything else.",
+      tiers: [
+        { label: "Best Cold Outreach Targets", people: [
+          { name: "Brett Podolsky", title: "Co-Founder & President", role: "Economic Buyer", status: "unknown", priority: true, note: "Best outreach target — operator background, will understand analytics value.", li: "#" },
+          { name: "Jonathan Regev", title: "CEO & Co-Founder", role: "Final Approver", status: "unknown", priority: false, note: "CEO — can loop in after champion is established.", li: "#" },
+          { name: "Amelia Schroeder", title: "Head of Product", role: "Champion Candidate", status: "unknown", priority: true, note: "Likely owns analytics day-to-day. Good secondary cold target.", li: "#" },
+        ]}
+      ]
+    },
+    nextSteps: [
+      { p:1, urgency:"week",  type:"linkedin", title:"Cold outreach: Brett Podolsky (Co-Founder) on LinkedIn", why:"No contact yet. Mixpanel displacement angle — reference their DTC growth + new cat food line as reason analytics is getting complex.", who:["Susan"], action:"sequence", cta:"Build Sequence" },
+      { p:2, urgency:"week",  type:"linkedin", title:"Cold outreach: Amelia Schroeder (Head of Product)",       why:"Alternative entry point — she likely owns analytics day-to-day and will feel the Mixpanel pain most acutely.", who:["Susan"], action:"write-email", cta:"Draft Message" },
+      { p:3, urgency:"month", type:"event",    title:"Invite Brett to an upcoming Amplitude event or webinar",  why:"Stage 0 cold accounts warm up faster through events. Low commitment ask, high brand impression.", who:["Susan"], action:"event", cta:"Draft Invite" },
+    ],
+    granolaContext: `From your Granola meeting notes:
+• Stage 0 — no meetings yet. No Granola notes for this account.`
+  },
+
+  "CarGurus": {
+    type: "New Logo", stage: "Closed Lost / Re-engage",
+    accountSummary: "Re-engagement play — lost to FullStory Nov 2025 (gap: session replay depth, now closed). FullStory contract up Q3 2026. Currently showing high intent — Kevin Westlake (CPO) searching 'FullStory alternative' right now. Strike before Q3 renewal locks them in.",
+    linkedin: [
+      { name: "Sam Zales", title: "President & COO", relevance: "influencer", note: "Operations leader — went with FullStory, may re-engage if pain resurfaces.", li: "#" },
+      { name: "Kevin Westlake", title: "Chief Product Officer", relevance: "buyer", note: "CPO — likely owns analytics vendor decision.", li: "#" },
+    ],
+    zoominfo: {
+      company: "CarGurus", industry: "Automotive / Marketplace", employees: "~1,000", hq: "Cambridge, MA", revenue: "$870M (NASDAQ: CARG)", funding: "Public",
+      website: "cargurus.com",
+      techStack: [{ name: "FullStory ⚠", type: "competitor" }, { name: "Google Analytics ⚠", type: "competitor" }, { name: "Salesforce", type: "normal" }, { name: "Snowflake", type: "normal" }, { name: "AWS", type: "normal" }],
+      signals: [{ date: "Apr 2026", text: "FullStory contract up for review Q3 2026 — re-engagement window opening" }, { date: "Mar 2026", text: "CarGurus Finance product launched — new analytics complexity" }, { date: "Jan 2026", text: "Prior eval: went with FullStory; gap was session replay depth at time" }]
+    },
+    salesforce: {
+      oppName: "CarGurus — Re-Engagement 2026", stage: "Closed Lost — Monitoring",
+      closeDate: "TBD", lastActivity: "Nov 2025",
+      nextSteps: "Monitor FullStory renewal timing (est. Q3 2026). Build re-engagement sequence leading with new Session Replay + Amplitude CDP capabilities — directly address gaps from last eval. Target Q2 2026 for first re-touch.",
+      activities: [{ type: "Note", date: "Nov 2025", note: "Closed Lost — went with FullStory. Gap: session replay capabilities." }, { type: "Note", date: "Oct 2025", note: "Final eval — strong on analytics, FullStory won on session replay depth" }]
+    },
+    sixsense: {
+      score: 52, stage: "Consideration",
+      personas: ["Product Management", "Executive / CPO"],
+      keywords: ["fullstory alternatives", "session replay product analytics", "amplitude session replay", "analytics platform comparison"],
+      activities: [{ date: "Apr 13", type: "search", label: "Search", text: "Searching 'fullstory alternative 2026' + 'amplitude session replay'" }, { date: "Apr 10", type: "web", label: "Web Visit", text: "Session Replay product page — 2 visits from Cambridge IP" }]
+    },
+    mutiny: {
+      identified: true, lastSeen: "Apr 13, 2026", visits: 3,
+      segment: "Re-Engagement — Researching Alternatives", persona: "Re-Eval Buyer",
+      pages: [{ url: "/product/session-replay", personalization: "Session Replay Comparison", engagement: "high" }, { url: "/vs/fullstory", personalization: "Amplitude vs FullStory", engagement: "high" }],
+      recommendation: "They're back and searching 'FullStory alternative' — this is your re-engagement signal. Don't wait for Q3. Send Kevin Westlake a personalized note: 'Saw you're evaluating options — wanted to show you how much Session Replay has evolved since we last spoke.' Short, direct, timely."
+    },
+    buyingMap: {
+      focus: ["Kevin Westlake"],
+      focusNote: "Re-engagement. Kevin (CPO) is the right re-entry point — directly owns the analytics vendor decision. Lead with what's changed since last eval (Session Replay + CDP).",
+      tiers: [
+        { label: "Decision Makers", people: [
+          { name: "Kevin Westlake", title: "Chief Product Officer", role: "Decision Maker", status: "target", priority: true, note: "CPO — owns the vendor decision. Re-engagement target based on FullStory alt search.", li: "#" },
+          { name: "Sam Zales", title: "President & COO", role: "Economic Buyer", status: "unknown", priority: false, note: "Was involved last time. May need to re-engage as deal progresses.", li: "#" },
+        ]}
+      ]
+    },
+    nextSteps: [
+      { p:1, urgency:"today", type:"email",   title:"Re-engagement email to Kevin Westlake (CPO) — send TODAY", why:"Searching 'FullStory alternative' right now. Mutiny + 6sense both lit up. This is a live signal — don't wait for Q3.", who:["Susan"], action:"write-email", cta:"Write Email Now" },
+      { p:2, urgency:"week",  type:"deck",    title:"Build re-engagement deck: what's changed since last eval",  why:"FullStory won on session replay depth last time. That gap is closed. Show exactly what's new — make it impossible to ignore.", who:["Susan"], action:"deck", cta:"Create Deck" },
+    ],
+    granolaContext: `From your Granola meeting notes:
+• No current meeting notes for CarGurus — closed lost in Nov 2025, went with FullStory. Re-engagement window opening as FullStory contract approaches Q3 2026 renewal.`
+  },
+
+  "Synchronoss": {
+    type: "New Logo", stage: "Stage 2",
+    accountSummary: "Good prospect with a live displacement angle — Adobe Analytics contract in review + cost reduction initiative underway. Rob Weinstein is the champion, Surge (his boss) is the real decision-maker. Demo with Surge + Heather being scheduled with Eddie.",
+    linkedin: [
+      { name: "Rob Weinstein", title: "VP Product Management", relevance: "champion", note: "Main contact — positive initial conversations. Follow-up demo to schedule.", li: "#" },
+      { name: "Jeff Miller", title: "CEO", relevance: "buyer", note: "CEO — needs to be looped in for any enterprise commitment.", li: "#" },
+      { name: "Taylor Greenwald", title: "Chief Digital Officer", relevance: "buyer", note: "Digital transformation lead — strong business case fit.", li: "#" },
+    ],
+    zoominfo: {
+      company: "Synchronoss Technologies", industry: "Cloud / Telecom Software", employees: "~1,200", hq: "Bridgewater, NJ", revenue: "$160M (NASDAQ: SNCR)", funding: "Public",
+      website: "synchronoss.com",
+      techStack: [{ name: "Adobe Analytics ⚠", type: "competitor" }, { name: "Salesforce", type: "normal" }, { name: "AWS", type: "normal" }, { name: "Azure", type: "normal" }, { name: "Marketo", type: "normal" }],
+      signals: [{ date: "Apr 2026", text: "Adobe Analytics contract in review — cost reduction initiative underway" }, { date: "Mar 2026", text: "New personal cloud product line launching — analytics use case expanding" }, { date: "Feb 2026", text: "Rob Weinstein promoted to VP — first full quarter in role" }]
+    },
+    salesforce: {
+      oppName: "Synchronoss — New Logo Eval", stage: "Stage 2 — Discovery",
+      closeDate: "Aug 31, 2026", lastActivity: "Mar 30, 2026",
+      nextSteps: "Schedule follow-up demo with Rob + team. Focus on Adobe Analytics displacement story — cost + capability gap. Get Taylor Greenwald (CDO) looped in before formal proposal.",
+      activities: [{ type: "Call", date: "Mar 30", note: "Discovery with Rob — Adobe pain confirmed. Scheduling follow-up demo." }, { type: "Email", date: "Mar 22", note: "Sent Amplitude vs Adobe Analytics comparison + ROI case studies" }, { type: "Meeting", date: "Mar 10", note: "Intro — Adobe contract coming up, evaluating alternatives" }]
+    },
+    sixsense: {
+      score: 68, stage: "Consideration",
+      personas: ["Product Management", "Digital / CDO", "Executive"],
+      keywords: ["adobe analytics alternative", "product analytics for telecom", "amplitude vs adobe", "digital experience analytics"],
+      activities: [{ date: "Apr 12", type: "search", label: "Search", text: "Searching 'adobe analytics replacement' + 'amplitude enterprise'" }, { date: "Apr 9", type: "web", label: "Web Visit", text: "Enterprise product page — 3 visits from NJ IP" }, { date: "Apr 6", type: "content", label: "Content", text: "Downloaded 'Adobe Analytics Migration Guide'" }]
+    },
+    mutiny: {
+      identified: true, lastSeen: "Apr 12, 2026", visits: 5,
+      segment: "Adobe Displacement — Active Eval", persona: "Enterprise Migration Buyer",
+      pages: [{ url: "/vs/adobe", personalization: "Amplitude vs Adobe Analytics", engagement: "high" }, { url: "/product/analytics", personalization: "Product Analytics for Enterprise", engagement: "med" }, { url: "/migrate", personalization: "Migration Resources", engagement: "high" }],
+      recommendation: "They downloaded the Adobe migration guide — this is the clearest displacement signal you have. Schedule the follow-up demo this week, lead with the migration story + cost comparison. Taylor (CDO) is the right exec to brief first given digital transformation ownership."
+    },
+    buyingMap: {
+      focus: ["Rob Weinstein", "Taylor Greenwald"],
+      focusNote: "Follow-up demo with Rob is the immediate action. Get Taylor (CDO) looped in before any formal proposal — digital transformation ownership makes this her decision.",
+      tiers: [
+        { label: "Executive / Digital Leadership", people: [
+          { name: "Taylor Greenwald", title: "Chief Digital Officer", role: "Economic Buyer", status: "target", priority: true, note: "CDO owns digital transformation — should receive exec brief before proposal.", li: "#" },
+          { name: "Jeff Miller", title: "CEO", role: "Final Approver", status: "unknown", priority: false, note: "Will be involved for enterprise commitment. Not yet engaged.", li: "#" },
+        ]},
+        { label: "Champion / Evaluation", people: [
+          { name: "Rob Weinstein", title: "VP Product Management", role: "Champion", status: "engaged", priority: true, note: "Main contact. Follow-up demo to schedule ASAP — strong engagement signal.", li: "#" },
+        ]}
+      ]
+    },
+    nextSteps: [
+      { p:1, urgency:"week",  type:"meeting", title:"Schedule follow-up demo with Rob Weinstein this week",   why:"Downloaded the Adobe migration guide — strongest intent signal you have. Don't wait. Book the demo before the signal cools.", who:["Susan"], action:"write-email", cta:"Draft Invite" },
+      { p:2, urgency:"week",  type:"email",   title:"Send Taylor Greenwald (CDO) exec brief before formal proposal", why:"CDO owns digital transformation — she'll be the economic buyer. Get in front of her before Rob brings in a proposal.", who:["Susan"], action:"write-email", cta:"Write Email" },
+      { p:3, urgency:"month", type:"deck",    title:"Build Adobe Analytics displacement business case + migration plan", why:"Adobe contract in review — they need a clear alternative. Cost + capability comparison with migration timeline will close this.", who:["Susan"], action:"deck", cta:"Create Deck" },
+    ],
+    slackContext: `From Slack (internal DMs with Eddie):
+• Eddie Chiang coordinating dry run: internal dry run + external dry run + official demo for Synchronoss
+• Eddie noted Synchronoss overlaps with his existing call with Sally — listen-only for Eddie on initial call`,
+    gmailContext: `From Gmail: No Synchronoss-specific emails found in recent search.`,
+    granolaContext: `From your Granola meeting notes:
+• Rob Weinstein is champion; Surge (Rob's boss) is the key decision-maker
+• Surge currently uses Glean + static CSVs — Rob is making the case for purpose-built analytics
+• Demo focus: Global Agent, MCP (Teams integration is highest priority), dashboard generation
+• Next step: Schedule demo with Surge and Heather; Eddie doing a 15-min dry run the day before`
+  }
+};
+
+const LAST_REFRESH = {
+  timestamp: "{}", 
+  sources: {
+    salesforce: { status: "connected", lastSync: null },
+    sixsense:   { status: "connected", lastSync: null },
+    mutiny:     { status: "connected", lastSync: null },
+    granola:    { status: "connected", lastSync: null },
+    gmail:      { status: "connected", lastSync: null }
+  }
+};
+
+</script>
+  <script>
+// nav.js — shared nav component injected into every page
+
+const LOGO_SRC = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iQXJ0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzODM5Ljc5NDI3IDgwMCI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogI2ZmZjsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPGcgaWQ9ImxvZ29fYW1wbGl0dWRlX2Z1bGwiPgogICAgPHBhdGggaWQ9ImxvZ29fYW1wbGl0dWRlX2xvZ290eXBlIiBjbGFzcz0iY2xzLTEiIGQ9Ik0xMTE0LjMwNjA0LDE0NC4yMjM5MWwtMTczLjg0MDkyLDQzNS44MTY2MWg3Ny4xOTUxN2wzNC4zMzY2Ny04Ny4yMjQwNGgxODQuMTczMzZsMzMuNzQwMzYsODcuMjI0MDRoNzkuMDE2NjNsLTE3My41MzczNC00MzUuODE2NjFoLTYxLjA4MzkzWk0xMDc4Ljc0NDIyLDQyMy4yMjE1N2w2NS4zNDQ4NC0xNjYuODU4NjYsNjQuNzI2ODUsMTY2Ljg1ODY2aC0xMzAuMDcxNjlaTTE3NDQuMDEwNDYsMjY5LjQzODM4Yy0yMC44NzA4OSwwLTQwLjExNTQ3LDQuODEzODYtNTcuNzQ0NTksMTQuNDMwNzMtMTcuNjE4MjgsOS42Mjc3MS0zMC42OTM3NSwyMi42NDg5OC0zOS4yMDQ3NCwzOS4wNTI5NS0xOC4wMzAyOC0zNS42NTk0LTQ5LjQzOTYtNTMuNDgzNjgtOTQuMjA2My01My40ODM2OC0xOC4wNDExMiwwLTM1LjQxMDAzLDMuOTAzMTMtNTIuMTI4NDIsMTEuNjk4NTQtMTYuNzE4MzksNy44MDYyNS0zMC4yMzgzOSwyMC4zMTc5NC00MC41NzA4MywzNy41MzUwN3YtNDIuODU4NWgtNjguOTg3NzZ2MzA0LjIyNzAzaDY4Ljk4Nzc2di0xNzAuNTAxNThjMC0yNC4zMDc4LDYuNjM1MzItNDIuNjQxNjYsMTkuOTA1OTUtNTUuMDAxNTYsMTMuMjcwNjMtMTIuMzU5OSwyOS4yMTkyNC0xOC41Mzk4NSw0Ny44Njc1MS0xOC41Mzk4NSwyMC42NjQ4OSwwLDM2Ljk3MTI4LDYuNTI2ODksNDguOTMwMDMsMTkuNjAyMzcsMTEuOTQ3OSwxMy4wNjQ2MywxNy45MzI3LDMxLjA1MTU0LDE3LjkzMjcsNTMuOTM5MDR2MTcwLjUwMTU4aDY5LjU5NDkydi0xNzAuNTAxNThjMC0yNC4zMDc4LDYuNTgxMTEtNDIuNjQxNjYsMTkuNzU0MTYtNTUuMDAxNTYsMTMuMTczMDUtMTIuMzU5OSwyOS4xNzU4Ny0xOC41Mzk4NSw0OC4wMTkzLTE4LjUzOTg1LDIwLjQ1ODg5LDAsMzYuNTcwMTMsNi41MjY4OSw0OC4zMjI4OCwxOS42MDIzNywxMS43NTI3NSwxMy4wNjQ2MywxNy42MjkxMiwzMS4wNTE1NCwxNy42MjkxMiw1My45MzkwNHYxNzAuNTAxNThoNzAuNTA1NjR2LTE4NS45OTQ4MmMwLTM3Ljg5Mjg1LTExLjQ5MjU0LTY4LjEzMTI0LTM0LjQ4ODQ2LTkwLjcyNjAxLTIyLjk5NTkyLTIyLjU4MzkyLTUzLjAzOTE1LTMzLjg4MTMxLTkwLjExODg2LTMzLjg4MTMxWk0yMTg2Ljg2MzU0LDI5MC43MTA0MmMtMjIuMTkzNjEtMTQuMTgxMzYtNDYuNTU1NjMtMjEuMjcyMDQtNzMuMDk2ODktMjEuMjcyMDQtMjQuMzA3OCwwLTQ1LjY4ODI2LDUuMjY5MjItNjQuMTE5NywxNS43OTY4Mi0xOC40NDIyNywxMC41Mzg0NC0zMy4yNDE2MywyNS42NDEzNy00NC4zNzYzOCw0NS4yODcxMXYtNTQuNzA4ODJoLTY4Ljk4Nzc2djQxMC41OTgwN2g2OC45ODc3NnYtMTYxLjA2OTAyYzExLjEzNDc1LDE5LjQ1MDU4LDI1LjkzNDExLDM0LjQ0NTA5LDQ0LjM3NjM4LDQ0Ljk3MjY5LDE4LjQzMTQzLDEwLjUzODQ0LDM5LjgxMTg5LDE1LjgwNzY2LDY0LjExOTcsMTUuODA3NjYsNDAuMzIxNDcsMCw3NC41NjA1Ni0xNS4zNTIzLDEwMi43MjgxMi00Ni4wNDYwNSwyOC4xNTY3Mi0zMC42OTM3NSw0Mi4yNDA1LTY4LjAyMjgyLDQyLjI0MDUtMTExLjk5ODA1LDAtMjguNzYzODctNi40MjkzMi01NS4zMDUxNC0xOS4yOTg3OS03OS42MjM3OC0xMi44Njk0OC0yNC4zMTg2NS0zMC4zOTAxOC00My41NjMyMy01Mi41NzI5NS01Ny43NDQ1OVpNMjE2My45MTA5OSw0OTMuMjcxODVjLTE3LjgyNDI4LDE3LjkzMjctMzkuNjA1ODksMjYuODk5MDUtNjUuMzM0LDI2Ljg5OTA1LTI2Ljc0NzI2LDAtNDguOTg0MjQtOC44MTQ1Ni02Ni43MTA5NC0yNi40NDM2OC0xNy43Mzc1NC0xNy42MjkxMi0yNi41OTU0Ny0zOS41MDgzMS0yNi41OTU0Ny02NS42NDg0MiwwLTI2LjU0MTI2LDguODU3OTMtNDguNjI2NDUsMjYuNTk1NDctNjYuMjU1NTcsMTcuNzI2Ny0xNy42MTgyOCwzOS45NjM2OC0yNi40MzI4NCw2Ni43MTA5NC0yNi40MzI4NCwyNS43MjgxMSwwLDQ3LjUwOTcyLDguOTY2MzUsNjUuMzM0LDI2Ljg4ODIxLDE3LjgzNTEyLDE3LjkzMjcsMjYuNzQ3MjYsMzkuODY2MSwyNi43NDcyNiw2NS44MDAyMSwwLDI1LjUzMjk1LTguOTEyMTQsNDcuMjYwMzYtMjYuNzQ3MjYsNjUuMTkzMDZaTTIzMTMuNDQ0MSw1ODAuMDQwNTJoNjguOTg3NzZWMTQ0LjIyMzkxaC02OC45ODc3NnY0MzUuODE2NjFaTTI0NDkuNDU3MjIsNTgwLjA0MDUyaDY4Ljk4Nzc2di0zMDQuMjI3MDNoLTY4Ljk4Nzc2djMwNC4yMjcwM1pNMjQ4NC40MDEwNSwxMzQuNDk4NjJjLTEyLjE1MzksMC0yMi41OTQ3Nyw0LjM1ODQ5LTMxLjMwMDkxLDEzLjA2NDYzLTguNzE2OTgsOC43MTY5OC0xMy4wNjQ2MywxOS4wNDk0My0xMy4wNjQ2MywzMC45OTczMywwLDEyLjM1OTksNC4zNDc2NSwyMi44OTgzNCwxMy4wNjQ2MywzMS42MTUzMyw4LjcwNjE0LDguNzA2MTQsMTkuMTQ3LDEzLjA2NDYzLDMxLjMwMDkxLDEzLjA2NDYzLDEyLjE2NDc0LDAsMjIuNjQ4OTgtNC4zNTg0OSwzMS40NjM1NC0xMy4wNjQ2Myw4LjgxNDU2LTguNzE2OTgsMTMuMjE2NDItMTkuMjU1NDIsMTMuMjE2NDItMzEuNjE1MzMsMC0xMS45NDc5LTQuNDAxODYtMjIuMjgwMzUtMTMuMjE2NDItMzAuOTk3MzMtOC44MTQ1Ni04LjcwNjE0LTE5LjI5ODc5LTEzLjA2NDYzLTMxLjQ2MzU0LTEzLjA2NDYzWk0yNjg5Ljg1NzI5LDE5NC4wNjQ2N2gtNjkuNTk0OTJ2ODEuNzQ4ODJoLTU3Ljc0NDU5djY1Ljk1Mmg1Ny43NDQ1OXYxMjMuNjk2NTljMCwzNy44OTI4NSwxMC4xMjY0NSw2Ny4wNjg3MiwzMC4zOTAxOCw4Ny41Mjc2MSwyMC4yNTI4OSwyMC40Njk3Myw0Ny41MDk3MiwzMC43MDQ2LDgxLjc0ODgyLDMwLjcwNDYsMTQuMTgxMzYsMCwyNi42NDk2OC0xLjIxNDMxLDM3LjM4MzI4LTMuNjUzNzZ2LTY0LjExOTdjLTYuMjc3NTMsMS42MTU0Ni0xMy43ODAyMSwyLjQyODYxLTIyLjQ4NjM1LDIuNDI4NjEtMTcuODM1MTIsMC0zMS44NjQ2OS00LjQxMjctNDIuMDg4NzEtMTMuMjI3MjYtMTAuMjM0ODctOC44MTQ1Ni0xNS4zNTIzLTIyLjQzMjE0LTE1LjM1MjMtNDAuODc0NDF2LTEyMi40ODIyOGg3OS45MjczNnYtNjUuOTUyaC03OS45MjczNnYtODEuNzQ4ODJaTTMwMzYuMDEwNDEsNDQwLjU0NzEyYzAsMjMuOTA2NjUtNi44MzA0Nyw0My4wNTM2NS0yMC41MTMxLDU3LjQ0MTAxLTEzLjY3MTc5LDE0LjM4NzM2LTMxLjc1NjI3LDIxLjU3NTYyLTU0LjI0MjYyLDIxLjU3NTYyLTIyLjI5MTE5LDAtNDAuMjIzODktNy4xODgyNi01My43OTgwOS0yMS41NzU2Mi0xMy41NzQyMS0xNC4zODczNi0yMC4zNjEzMS0zMy41MzQzNi0yMC4zNjEzMS01Ny40NDEwMXYtMTY0LjczMzYzaC02OC45ODc3NnYxNzIuOTQxMDNjMCw0Mi43NTAwOCwxMS4yNDMxNyw3Ni4zMjc4MSwzMy43Mjk1MiwxMDAuNzQ0MDMsMjIuNDk3MTksMjQuNDE2MjMsNTMuMzg2MSwzNi42MjQzNCw5Mi42OTkyNiwzNi42MjQzNCwyMC4wNTc3MywwLDM3Ljg4MjAxLTQuNjYyMDcsNTMuNDgzNjgtMTMuOTg2MiwxNS42MDE2Ni05LjMxMzI5LDI4LjI2NTE0LTIyLjY4MTUsMzcuOTkwNDMtNDAuMTE1NDd2NDguMDE5M2g2OS42MDU3NnYtMzA0LjIyNzAzaC02OS42MDU3NnYxNjQuNzMzNjNaTTM0MTIuMTc0MjMsMzI5LjMwODAxYy0xMS4xNDU1OS0xOS4yNDQ1OC0yNS44MjU2OS0zNC4wNDM5NC00NC4wNjE5Ni00NC4zNzYzOC0xOC4yMzYyNy0xMC4zMzI0NC0zOS40MTA3NC0xNS40OTMyNC02My41MjMzOC0xNS40OTMyNC0yNi41NDEyNiwwLTUwLjk1NzQ5LDYuOTgyMjYtNzMuMjM3ODMsMjAuOTY4NDYtMjIuMjkxMTksMTMuOTc1MzYtMzkuOTIwMzEsMzMuMTIyMzctNTIuODg3MzYsNTcuNDQxMDEtMTIuOTY3MDUsMjQuMzE4NjUtMTkuNDUwNTgsNTAuODU5OTEtMTkuNDUwNTgsNzkuNjIzNzgsMCwyOC43NzQ3Miw2LjQ4MzUzLDU1LjM3MDE5LDE5LjQ1MDU4LDc5Ljc4NjQxLDEyLjk2NzA1LDI0LjQxNjIzLDMwLjU5NjE4LDQzLjY2MDgxLDUyLjg4NzM2LDU3Ljc0NDU5LDIyLjI4MDM1LDE0LjA4Mzc4LDQ2LjY5NjU3LDIxLjEyMDI1LDczLjIzNzgzLDIxLjEyMDI1LDI0LjExMjY1LDAsNDUuMjg3MTEtNS4xMTc0Myw2My41MjMzOC0xNS4zNTIzLDE4LjIzNjI3LTEwLjIyNDAyLDMyLjkxNjM3LTI0Ljk2OTE3LDQ0LjA2MTk2LTQ0LjIxMzc1djUzLjQ4MzY4aDY5LjkwOTMzVjE0NC4yMjM5MWgtNjkuOTA5MzN2MTg1LjA4NDA5Wk0zMzg1LjU4OTYsNDkzLjU3NTQzYy0xNy43Mzc1NCwxNy43Mzc1NC0zOS43Njg1MiwyNi41OTU0Ny02Ni4xMDM3OSwyNi41OTU0Ny0yNS43Mzg5NSwwLTQ3LjUyMDU3LTguOTY2MzUtNjUuMzQ0ODQtMjYuODk5MDUtMTcuODM1MTItMTcuOTMyNy0yNi43NDcyNi0zOS44NTUyNi0yNi43NDcyNi02NS44MDAyMSwwLTI1LjUyMjExLDguOTEyMTQtNDcuMjYwMzYsMjYuNzQ3MjYtNjUuMTkzMDYsMTcuODI0MjgtMTcuOTIxODYsMzkuNjA1ODktMjYuODg4MjEsNjUuMzQ0ODQtMjYuODg4MjEsMjYuMzM1MjYsMCw0OC4zNjYyNCw4LjgxNDU2LDY2LjEwMzc5LDI2LjQzMjg0LDE3LjcyNjcsMTcuNjI5MTIsMjYuNTg0NjMsMzkuNTE5MTYsMjYuNTg0NjMsNjUuNjQ4NDIsMCwyNi4zNDYxLTguODU3OTMsNDguMzc3MDktMjYuNTg0NjMsNjYuMTAzNzlaTTM4MzkuNzk0MjcsNDIxLjQwMDExYzAtMjguOTgwNzEtNi42ODk1My01NS4xNjQxOS0yMC4wNTc3My03OC41NzIxMS0xMy4zNzkwNS0yMy4zOTcwOC0zMS4zNTUxMi00MS40ODE1Ni01My45NDk4OC01NC4yNDI2Mi0yMi41OTQ3Ny0xMi43NzE5LTQ3LjQ2NjM2LTE5LjE0Ny03NC42MTQ3Ny0xOS4xNDctMjguNzYzODcsMC01NS4xNTMzNSw2Ljg4NDY4LTc5LjE2ODQyLDIwLjY2NDg5LTI0LjAwNDIzLDEzLjc4MDIxLTQyLjk1NjA4LDMyLjY2Ny01Ni44MzM4Niw1Ni42ODIwNy0xMy44Nzc3OCwyNC4wMDQyMy0yMC44MTY2OCw1MC41MDIxMi0yMC44MTY2OCw3OS40NzE5OSwwLDI5Ljc4MzAyLDYuOTM4ODksNTYuOTQyMjgsMjAuODE2NjgsODEuNDU2MDgsMTMuODc3NzgsMjQuNTEzOCwzMi44NzMsNDMuNzE1MDIsNTYuOTg1NjUsNTcuNTkyOCwyNC4xMTI2NSwxMy44Nzc3OCw1MC44NTk5MSwyMC44MTY2OCw4MC4yNDE3OCwyMC44MTY2OCwzNy40ODA4NiwwLDY5LjM4ODkyLTkuNzI1MjksOTUuNzM1MDItMjkuMTc1ODcsMjYuMzM1MjYtMTkuNDUwNTgsNDIuMzM4MDgtNDUuMTc4NjksNDguMDE5My03Ny4xOTUxN2gtNjkuNjA1NzZjLTMuMDM1NzcsMTIuOTY3MDUtMTEuMjk3MzgsMjMuNTA1NS0yNC43NjMxNywzMS42MDQ0OC0xMy40NzY2Myw4LjEwOTgzLTI5LjUzMzY2LDEyLjE1MzktNDguMTcxMDksMTIuMTUzOS0yNC4xMTI2NSwwLTQzLjg2NjgxLTYuNDgzNTMtNTkuMjYyNDctMTkuNDUwNTgtMTUuNDA2NTEtMTIuOTU2MjEtMjUuMzM3OC0zMC43OTEzMy0yOS43OTM4Ny01My40ODM2OGgyMzMuNDE3ODFjMS4yMTQzMS01LjQ3NTIyLDEuODIxNDYtMTUuMjAwNTEsMS44MjE0Ni0yOS4xNzU4N1pNMzYwNi4zODczLDM5MS4zMTM1MWM1LjA2MzIyLTE4LjY0ODI3LDE0LjY4MDA5LTMzLjEzMzIxLDI4Ljg3MjI5LTQzLjQ2NTY1LDE0LjE4MTM2LTEwLjMzMjQ0LDMxLjQ5NjA2LTE1LjUwNDA5LDUxLjk2NTc5LTE1LjUwNDA5LDIwLjY2NDg5LDAsMzcuOTM2MjIsNS40MzE4NSw1MS44MTQwMSwxNi4yNjMwMywxMy44Nzc3OCwxMC44NDIwMiwyMi4zNDU0LDI1LjA3NzU5LDI1LjM4MTE2LDQyLjcwNjcxaC0xNTguMDMzMjZaIi8+CiAgICA8cGF0aCBpZD0ibG9nb19hbXBsaXR1ZGVfbWFyay1jaXJjbGUiIGNsYXNzPSJjbHMtMSIgZD0iTTQwMCwwQzE3OS4xMTYyNywwLDAsMTc5LjExNjIxLDAsNDAwczE3OS4xMTYyNyw0MDAsNDAwLDQwMCw0MDAtMTc5LjExNjk0LDQwMC00MDBTNjIwLjg4Mzc5LDAsNDAwLDBaTTY3NC4zMDkzMyw0MTIuMjA4ODZoLTE5MC4wODQ0N2MxMy42MTE0NSw1NC41ODE0MiwzOC41NjkyNywxODUuMDYwMTgsNzIuODkxNzgsMTg1LjA2MDE4LDI1Ljk3NDA2LDAsMzguMDQ3NjEtNDAuNjI5ODgsNjEuNTI2NDMtMTA2LjM0NTA5LDMuODQ2MDEtMTAuNzY0ODksOC45OTc1Ni0yNS43Mjc5MSwxNC45MTEzMi00MS43NzE4NSwxLjM2NTExLTMuNzAzMjUsNC44NTMwMy02LjMxNzAyLDguNzk5OC02LjI4NTI4LDYuMTYxOTMuMDQ5NDQsMTAuNTU3OCw2LjA0NzQ5LDguNjkwNjcsMTEuOTM0OTQtMy40MjE1MSwxMC43ODg5NC02Ljc2Mjc2LDIzLjEyMjU2LTkuOTEyMTEsMzcuMjQ2MzQtMjEuNDgyNDIsOTYuMzQxMDYtNDYuODQ1NzYsMTU4Ljg3NTQ5LTk3Ljk5MjEzLDE1OC44NzU0OS01Ny43MjEwMSwwLTkxLjc2OTcxLTE0OS4xMDc0Mi0xMTYuMzA1MDUtMjM4LjcxNDcyaC0xNzQuMTM2MzVzLTE4LjU1NTYsNTguMTYyMzUtMzQuNDY5NDIsMTEwLjkyMDY1Yy0yLjMxMzM1LDcuNjY5NTYtOS4zNzQzMywxMi45MTY1LTE3LjM4NTEzLDEyLjkxNjVoLS4wMDAwNmMtMTEuMTMyNTEsMC0xOS42NTgzOS05LjkyMjczLTE3Ljk0OTg5LTIwLjkyMzIyLDQuODAwMjktMzAuOTA3NDcsMTEuMDc1NS02My44NTU0NywxOS4zNjI3My0xMDMuMDc0NThoLTcwLjE1OTQyYy0xNS4yNzM1LDAtMjcuNjU1MDktMTIuMzgxNTktMjcuNjU1MDktMjcuNjU1MTVoMGMwLTE1LjQyNzczLDEyLjYyMzE3LTI3Ljg3MjMxLDI4LjA0OTI2LTI3LjY1MjM0bDgyLjA2NjM1LDEuMTY5NjhjMjkuMjk0MDEtMTE5Ljc0MTgyLDcyLjkwNDA1LTIzNS42NjExMywxMzIuNDM3ODEtMjM1LjY2MTEzLDU2LjkzOTgyLDAsMTAzLjA2MDU1LDE1NC4wNzQ3MSwxMjQuNzQ2ODMsMjM4Ljc3NDksNzEuNTU4NDcsMS42MjEzNCwxNDcuODUyNjYsNC4zMDY4OCwyMDQuMjU4NjEsOC43NTYxLDExLjA0NTQxLjg3MTA5LDE5LjU1NTM2LDEwLjEwMTA3LDE5LjU1NTM2LDIxLjE4MDY2di4wMDAxMmMwLDExLjczNDc0LTkuNTEzLDIxLjI0NzgtMjEuMjQ3OCwyMS4yNDc4Wk0zNDQuOTA3OSwxNzUuNTgyNTJjLTE4LjUyMTczLDAtNTEuOTU1Miw3NC43MzU4NC03OS42MTA5NiwxODIuOTcyMTcsNi4zODgwNi4wMDM0Miw2OC43OTgwMy4wNzAzMSwxNDcuMzY1MjMsMS4zMzIyOC0yMy4xNTU0Ni04NS40NDg3My01MS4wMjgwOC0xODQuMzA0NDQtNjcuNzU0MjctMTg0LjMwNDQ0WiIvPgogIDwvZz4KPC9zdmc+";
+
+const SKILL_LINKS = {
+  'write-email':      'claude://skill/sales:draft-outreach',
+  'sequence':         'claude://skill/sales:draft-outreach',
+  'call-prep':        'claude://skill/sales:call-prep',
+  'call-summary':     'claude://skill/sales:call-summary',
+  'battlecard':       'claude://skill/sales:competitive-intelligence',
+  'expansion-intel':  'claude://skill/amplitude-expansion-intel',
+  'account-research': 'claude://skill/sales:account-research',
+  'sfnotes':          'claude://skill/sf-next-steps-updater',
+  'deck':             'claude://skill/amplitude-deck',
+  'event':            'claude://',
+  'contacts':         'claude://skill/zoominfo-prospecting',
+};
+
+function injectNav(activePage) {
+  const lastSync = (typeof LAST_REFRESH !== 'undefined' && LAST_REFRESH.timestamp)
+    ? new Date(LAST_REFRESH.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })
+    : 'Never synced';
+
+  const pages = [
+    { id: 'index',   label: 'My Accounts', icon: '◎', href: 'index.html' },
+    { id: 'queue',   label: 'Action Queue', icon: '⚡', href: 'queue.html' },
+    { id: 'settings',label: 'Settings',    icon: '⚙', href: 'settings.html' },
+  ];
+
+  const links = pages.map(p => {
+    const cls = p.id === activePage ? 'active' : '';
+    return `<a href="${p.href}" class="${cls}">${p.icon} ${p.label}</a>`;
+  }).join('');
+
+  document.getElementById('app-nav').innerHTML = `
+    <nav class="nav">
+      <div style="display:flex;align-items:center;gap:20px;">
+        <a href="index.html" style="display:flex;align-items:center;">
+          <img src="${LOGO_SRC}" alt="Amplitude" style="height:20px;width:auto;" />
+        </a>
+        <div class="nav-links">${links}</div>
+      </div>
+      <div class="nav-right">
+        <span class="last-sync">Last sync: ${lastSync}</span>
+        <button class="refresh-btn" onclick="openRefresh()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Refresh Data
+        </button>
+      </div>
+    </nav>
+  `;
+}
+
+function openRefresh() {
+  window.location.href = 'claude://skill/amplitude-expansion-intel';
+}
+
+// ── Action Modal ──────────────────────────────────────────────────
+let _currentSkillLink = 'claude://';
+let _currentPrompt = '';
+
+function injectModal() {
+  const div = document.createElement('div');
+  div.id = 'actionModal';
+  div.style.display = 'none';
+  div.className = 'modal-overlay';
+  div.onclick = (e) => { if (e.target === div) closeModal(); };
+  div.innerHTML = `
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-head-title">
+          <span id="modalEmoji">⚡</span>
+          <span id="modalTitle">Action</span>
+        </div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <button class="modal-cowork-btn" id="modalCoworkBtn" onclick="openInCowork()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Open in Cowork
+        </button>
+        <div class="modal-prompt-hint">Prompt auto-copies when you click above — just paste in Cowork</div>
+        <div class="modal-prompt-text" id="modalPrompt"></div>
+        <button class="modal-copy-btn" id="modalCopyBtn" onclick="copyModalPrompt()">Copy prompt</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(div);
+}
+
+function openAction(actionId, acct, title, prompt) {
+  _currentSkillLink = SKILL_LINKS[actionId] || 'claude://';
+  _currentPrompt = prompt;
+  document.getElementById('modalEmoji').textContent = '⚡';
+  document.getElementById('modalTitle').textContent = title || actionId;
+  document.getElementById('modalPrompt').textContent = prompt;
+  document.getElementById('modalCoworkBtn').className = 'modal-cowork-btn';
+  document.getElementById('modalCoworkBtn').innerHTML = `
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    Open in Cowork`;
+  document.getElementById('modalCopyBtn').textContent = 'Copy prompt';
+  document.getElementById('modalCopyBtn').classList.remove('copied');
+  document.getElementById('actionModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('actionModal').style.display = 'none';
+}
+
+function openInCowork() {
+  const btn = document.getElementById('modalCoworkBtn');
+  navigator.clipboard.writeText(_currentPrompt).then(() => {
+    btn.classList.add('success');
+    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied! Opening Cowork…`;
+    setTimeout(() => { window.location.href = _currentSkillLink; }, 400);
+    setTimeout(() => {
+      btn.classList.remove('success');
+      btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open in Cowork`;
+    }, 3000);
+  });
+}
+
+function copyModalPrompt() {
+  navigator.clipboard.writeText(_currentPrompt).then(() => {
+    const btn = document.getElementById('modalCopyBtn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy prompt'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+
+</script>
+  <script>
+    // ── Data alias — ported functions use accountData ───────────────
+    const accountData = ACCOUNTS;
+
+    // ── Get account from URL param ──────────────────────────────────
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentAccount = urlParams.get('account') || Object.keys(ACCOUNTS)[0];
+
+    function switchAccount(name) {
+      currentAccount = name;
+      history.replaceState(null, '', '?account=' + encodeURIComponent(name));
+      document.getElementById('detailAccountName').textContent = name;
+      document.getElementById('accountSelect').value = name;
+      renderAll(name);
+    }
+
+    function rebuildSelect() {
+      const sel = document.getElementById('accountSelect');
+      sel.innerHTML = Object.keys(ACCOUNTS).map(name =>
+        `<option value="${name}" ${name === currentAccount ? 'selected' : ''}>${name}</option>`
+      ).join('');
+    }
+
+    // ── Port all render functions from original dashboard ──────────
+
+    // Prompt builder (mirrors promptBuilder.ts)
+    function buildAccountPrompt(actionId, acct) {
+      const d = ACCOUNTS[acct];
+      const focuses = d.buyingMap?.focus?.join(', ') || 'key contacts';
+      const competitors = (d.zoominfo?.techStack || []).filter(t=>t.type==='competitor').map(t=>t.name.replace(/\s*[⚠✓].*/,'')).join(', ') || 'current tools';
+      const topSignal = d.zoominfo?.signals?.[0]?.text || '';
+      const intentScore = d.sixsense?.score || 0;
+      const stage = d.sixsense?.stage || '';
+      const mutinyRec = (d.mutiny?.recommendation || '').substring(0, 200);
+      const sfActivities = (d.salesforce?.activities || []).map(a=>`${a.date} [${a.type}]: ${a.note}`).join('\n');
+      const granola = d.granolaContext ? `\n\n--- MEETING NOTES (Granola) ---\n${d.granolaContext}` : '';
+      const slack = d.slackContext ? `\n\n--- SLACK CONTEXT ---\n${d.slackContext}` : '';
+      const gmail = d.gmailContext ? `\n\n--- EMAIL CONTEXT (Gmail) ---\n${d.gmailContext}` : '';
+      const ctx = granola + slack + gmail;
+
+      const prompts = {
+        'write-email': `Write a personalized outreach email for ${acct}.\n\nContext:\n• Deal: ${d.type}, ${d.stage}\n• Contacts: ${focuses}\n• 6sense intent: ${intentScore}/100 (${stage} stage)\n• Researching: ${d.sixsense?.keywords?.slice(0,3).join(', ')}\n• Recent signal: ${topSignal}\n• Website behavior: ${mutinyRec}${ctx}\n\nWarm, casual, direct. Reference a specific signal. Under 120 words.`,
+        'sequence': `Build a 3-step outreach sequence for ${acct}.\n\nTarget contacts: ${focuses}\nDeal: ${d.type}, ${d.stage}\nCompetitors: ${competitors}\nIntent: ${d.sixsense?.keywords?.slice(0,3).join(', ')}${ctx}\n\nStep 1 (Day 1): LinkedIn note\nStep 2 (Day 4): Value email\nStep 3 (Day 10): Insight follow-up\n\nTone: casual, consultative.`,
+        'call-prep': `Prep me for an upcoming call with ${acct}.\n\nDeal: ${d.type}, ${d.stage}, close: ${d.salesforce?.closeDate}\nContacts: ${focuses}\nSF next steps: ${d.salesforce?.nextSteps}\nRecent activity:\n${sfActivities}\n6sense: ${intentScore}/100 (${stage})\nResearching: ${d.sixsense?.keywords?.slice(0,4).join(', ')}\nTop signal: ${topSignal}\nCompetitors: ${competitors}${ctx}\n\nBuild: (1) 3-bullet account summary, (2) 3 discovery questions, (3) suggested agenda, (4) #1 thing to accomplish.`,
+        'call-summary': `Summarize my call with ${acct} and draft follow-up.\n\n[PASTE CALL NOTES BELOW]\n\n---\n\nDeal: ${d.type}, ${d.stage}\nContacts: ${focuses}\nPrior SF next steps: ${d.salesforce?.nextSteps}${ctx}\n\nDeliver: (1) 3-bullet summary, (2) action items with owners, (3) follow-up email in Susan's voice, (4) updated SF Next Steps.`,
+        'battlecard': `Build a competitive battlecard for ${acct}.\n\nCompetitors: ${competitors}\nIndustry: ${d.zoominfo?.industry}, ${d.zoominfo?.employees} employees\nStage: ${d.stage}${ctx}\n\nFor each competitor: why customers leave, our differentiators, likely objections + handling, one-liner.`,
+        'expansion-intel': `Run expansion intelligence for ${acct}.\n\nExisting customer. Industry: ${d.zoominfo?.industry}\nContacts: ${focuses}\nSF: ${d.salesforce?.oppName}, ${d.salesforce?.stage}\n6sense: ${d.sixsense?.keywords?.slice(0,3).join(', ')}\nTop signal: ${topSignal}${ctx}\n\n1. Which Amplitude products are they NOT using?\n2. Best expansion angle?\n3. Who should own the conversation?\n4. What's blocking + how to unblock?\n5. Suggested outreach.`,
+        'account-research': `Deep research on ${acct} for a sales call.\n\nIndustry: ${d.zoominfo?.industry}\nSize: ${d.zoominfo?.employees}, HQ: ${d.zoominfo?.hq}\nTools: ${competitors}\nDeal: ${d.type}\nContacts: ${focuses}${ctx}\n\n1. Company overview + recent news (90 days)\n2. Strategic initiatives\n3. Why Amplitude is relevant now\n4. Personalization hooks\n5. Risks or red flags.`,
+        'sfnotes': `Update Salesforce Next Steps for ${acct}.\n\nOpp: ${d.salesforce?.oppName}\nStage: ${d.salesforce?.stage}\nCurrent next steps: ${d.salesforce?.nextSteps}\nActivity log:\n${sfActivities}\n6sense: ${intentScore}/100\nMutiny: ${mutinyRec}${ctx}\n\nFormat: [Date] [Action] [Owner] [Expected outcome]. 3-4 bullets max.`,
+        'deck': `Create an account deck for ${acct}.\n\nAudience: ${focuses}\nCompany: ${d.zoominfo?.employees} employees, ${d.zoominfo?.hq}, ${d.zoominfo?.industry}\nCompetitors: ${competitors}\nWhy now: ${topSignal}\nDeal: ${d.type}, ${d.stage}${ctx}\n\nAmplitude branding, light mode. 8-10 slides. Lead with their problem.`,
+        'event': `Draft an event invitation for ${acct}.\n\nAudience: ${focuses} (${d.stage})\nCompany: ${d.zoominfo?.industry}, ${d.zoominfo?.hq}\nSignal: ${topSignal}${ctx}\n\nShort, conversational, tailored to their situation.`,
+        'contacts': `Find new contacts at ${acct} for the buying committee.\n\nCurrent: ${focuses}\nLooking for: ${d.stage?.includes('0') ? 'initial champion at VP/Director level' : 'economic buyers'}\nCompany: ${d.zoominfo?.employees} employees, ${d.zoominfo?.industry}${ctx}\n\nSearch Apollo/ZoomInfo for VP, Director, Head of Product, Data, Analytics, Engineering.`,
+      };
+      return prompts[actionId] || prompts['write-email'];
+    }
+
+
+function switchLiTab(tab) {
+  currentLiTab = tab;
+  document.getElementById('tabContacts').classList.toggle('active', tab === 'contacts');
+  document.getElementById('tabMap').classList.toggle('active', tab === 'map');
+  renderLinkedIn(currentAccount);
+}
+
+// ================================================================
+// FILTER LOGIC
+// ================================================================
+function getFilteredAccounts() {
+  return Object.entries(accountData).filter(([name, d]) => {
+    if (currentFilter === "all") return true;
+    if (currentFilter === "expansion") return d.type === "Expansion";
+    if (currentFilter === "new-logo") return d.type === "New Logo";
+    if (currentFilter === "s0") return d.stage === "Stage 0";
+    if (currentFilter === "s2") return d.stage === "Stage 2";
+    if (currentFilter === "s3") return d.stage === "Stage 3";
+    if (currentFilter === "lost") return d.stage.includes("Lost");
+    if (currentFilter === "high-intent") return d.sixsense.score >= 70;
+    return true;
+  }).map(([name]) => name);
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  rebuildSelect();
+}
+
+function rebuildSelect() {
+  const filtered = getFilteredAccounts();
+  const sel = document.getElementById('accountSelect');
+  sel.innerHTML = filtered.map(name => `<option value="${name}">${name}</option>`).join('');
+  document.getElementById('acctCount').textContent = `${filtered.length} account${filtered.length !== 1 ? 's' : ''}`;
+  const toShow = filtered.includes(currentAccount) ? currentAccount : filtered[0];
+  if (toShow) { sel.value = toShow; switchAccount(toShow); }
+  else { document.getElementById('linkedinBody').innerHTML = '<p style="color:#94A3B8;font-size:13px;padding:10px 0;">No accounts match this filter.</p>'; document.getElementById('zoominfoBody').innerHTML = ''; document.getElementById('salesforceBody').innerHTML = ''; document.getElementById('sixsenseBody').innerHTML = ''; document.getElementById('mutinyBody').innerHTML = ''; document.getElementById('contextBar').innerHTML = ''; }
+}
+
+// ================================================================
+// SYNC SIMULATION
+// ================================================================
+function simulateSync() {
+  const btn = document.getElementById('syncBtn');
+  btn.classList.add('loading');
+  btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Syncing…`;
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync from SF`;
+  }, 1800);
+}
+
+// ================================================================
+// RENDER CONTEXT BAR
+// ================================================================
+function renderContextBar(acct) {
+  const d = accountData[acct];
+  const typeCls = d.type === "Expansion" ? "badge-expansion" : d.stage.includes("Lost") ? "badge-lost" : "badge-new-logo";
+  const stageCls = d.stage === "Stage 3" ? "badge-s3" : "badge-stage";
+  const score = d.sixsense.score;
+  const scoreColor = score >= 80 ? "#EF4444" : score >= 65 ? "#F59E0B" : "#94A3B8";
+  document.getElementById("contextBar").innerHTML = `
+    <div class="context-bar-row">
+      <span class="context-name">${acct}</span>
+      <span class="context-sep">·</span>
+      <span class="badge ${typeCls}">${d.type}</span>
+      <span class="badge ${stageCls}">${d.stage}</span>
+      <span class="context-sep">·</span>
+      <span style="font-size:12px;color:rgba(255,255,255,0.6);">6sense Intent:</span>
+      <span style="font-size:13px;font-weight:700;color:${scoreColor};">${score}/100</span>
+      <span class="context-sep">·</span>
+      <span style="font-size:12px;color:rgba(255,255,255,0.6);">AE: Susan Wahl</span>
+    </div>
+    ${d.accountSummary ? `<div class="context-summary">${d.accountSummary}</div>` : ''}
+  `;
+}
+
+// ================================================================
+// RENDER LINKEDIN
+// ================================================================
+function renderLinkedIn(acct) {
+  if (currentLiTab === 'contacts') {
+    renderLinkedInContacts(acct);
+  } else {
+    renderBuyingMap(acct);
+  }
+}
+
+function renderLinkedInContacts(acct) {
+  const contacts = accountData[acct].linkedin;
+  const bm = accountData[acct].buyingMap;
+  const relMap = { champion: ["rel-champion","Champion"], buyer: ["rel-buyer","Econ. Buyer"], influencer: ["rel-influencer","Influencer"], unknown: ["rel-unknown","Unknown"] };
+
+  // Priority highlight strip
+  const priorityNames = bm ? bm.focus : [];
+  let html = contacts.map(c => {
+    const [cls, label] = relMap[c.relevance] || relMap.unknown;
+    const isPriority = priorityNames.includes(c.name);
+    return `<div class="contact-card" style="${isPriority ? 'background:#FAFBFF;border-left:3px solid #0052F2;padding-left:9px;border-radius:0 6px 6px 0;margin-bottom:4px;' : ''}">
+      ${isPriority ? '<div style="font-size:9px;font-weight:700;color:#0052F2;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px;">⭐ Involve Now</div>' : ''}
+      <div class="contact-top">
+        <div>
+          <div class="contact-name">${c.name}</div>
+          <div class="contact-title">${c.title}</div>
+          <span class="relevance ${cls}">${label}</span>
+        </div>
+        <a class="li-btn" href="${c.li}" target="_blank">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+      </div>
+      <div class="contact-note">${c.note}</div>
+    </div>`;
+  }).join('');
+  html += `<button class="add-contact-btn">+ Add contact manually</button>`;
+  document.getElementById("linkedinBody").innerHTML = html;
+}
+
+function renderBuyingMap(acct) {
+  const bm = accountData[acct].buyingMap;
+  if (!bm) { document.getElementById("linkedinBody").innerHTML = '<p style="color:#94A3B8;font-size:13px;padding:10px 0;">No buying map for this account yet.</p>'; return; }
+
+  // Status helpers
+  const statusBar = { engaged: 'st-engaged', target: 'st-target', unknown: 'st-unknown', risk: 'st-risk' };
+  const statusLabel = { engaged: ['sl-engaged','Engaged'], target: ['sl-target','Not Connected'], unknown: ['sl-unknown','Unknown'], risk: ['sl-risk','At Risk'] };
+  const roleClass = { 'Economic Buyer': 'role-buyer', 'Final Approver': 'role-buyer', 'Budget Holder': 'role-buyer', 'Budget Owner': 'role-buyer', 'Exec Sponsor': 'role-buyer', 'Champion': 'role-champion', 'Champion Candidate': 'role-champion', 'Gatekeeper': 'role-legal', 'Legal Review': 'role-legal', 'Technical Evaluator': 'role-technical', 'Technical Sign-off': 'role-technical', 'Influencer': 'role-influencer', 'Decision Maker': 'role-buyer' };
+
+  // Involve Now banner
+  const chips = bm.focus.map(n => `<span class="involve-chip">${n}</span>`).join('');
+  let html = `<div class="involve-banner">
+    <div class="involve-title">⭐ Involve Now — ${accountData[acct].stage}</div>
+    <div class="involve-people">${chips}</div>
+    <div class="involve-note">${bm.focusNote}</div>
+  </div>`;
+
+  // Coverage summary
+  const allPeople = bm.tiers.flatMap(t => t.people);
+  const engaged = allPeople.filter(p => p.status === 'engaged').length;
+  const targeted = allPeople.filter(p => p.status === 'target').length;
+  const unknown = allPeople.filter(p => p.status === 'unknown').length;
+  const pips = allPeople.map(p => `<div class="coverage-pip ${p.status === 'engaged' ? 'pip-engaged' : p.status === 'target' ? 'pip-target' : 'pip-unknown'}" title="${p.name} — ${p.status}"></div>`).join('');
+
+  html += `<div class="coverage-bar">
+    <span class="coverage-label">Coverage: <strong>${engaged} engaged</strong> · ${targeted} targeted · ${unknown} unknown</span>
+    <div class="coverage-pips">${pips}</div>
+  </div>`;
+
+  // Tiers
+  bm.tiers.forEach(tier => {
+    html += `<div class="map-tier"><div class="map-tier-label">${tier.label}</div>`;
+    tier.people.forEach(p => {
+      const stBar = statusBar[p.status] || 'st-unknown';
+      const [slCls, slText] = statusLabel[p.status] || ['sl-unknown', 'Unknown'];
+      const roleCls = roleClass[p.role] || 'role-unknown';
+      html += `<div class="map-person ${p.priority ? 'priority' : ''}">
+        <div class="map-status-bar ${stBar}"></div>
+        <div class="map-person-body">
+          <div class="map-person-name">
+            ${p.name}
+            ${p.priority ? '<span class="map-priority-star">⭐</span>' : ''}
+          </div>
+          <div class="map-person-title">${p.title}</div>
+          ${p.note ? `<div class="map-person-note">${p.note}</div>` : ''}
+        </div>
+        <div class="map-person-right">
+          <span class="map-role-badge ${roleCls}">${p.role}</span>
+          <span class="map-status-label ${slCls}">${slText}</span>
+          <a class="map-li-btn" href="${p.li}" target="_blank">LI</a>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  document.getElementById("linkedinBody").innerHTML = html;
+}
+
+// ================================================================
+// RENDER ZOOMINFO
+// ================================================================
+function renderZoomInfo(acct) {
+  const z = accountData[acct].zoominfo;
+  const chips = z.techStack.map(t => `<span class="tech-chip ${t.type === 'competitor' ? 'competitor' : t.type === 'amplitude' ? 'amplitude' : ''}">${t.name}</span>`).join('');
+  const sigs = z.signals.map(s => `<div class="signal-item"><div class="signal-dot"></div><div class="signal-date">${s.date}</div><div class="signal-text">${s.text}</div></div>`).join('');
+  document.getElementById("zoominfoBody").innerHTML = `
+    <div class="zi-section">
+      <div class="zi-section-title">Overview</div>
+      <div class="zi-row"><span class="zi-label">Industry</span><span class="zi-value">${z.industry}</span></div>
+      <div class="zi-row"><span class="zi-label">Employees</span><span class="zi-value">${z.employees}</span></div>
+      <div class="zi-row"><span class="zi-label">HQ</span><span class="zi-value">${z.hq}</span></div>
+      <div class="zi-row"><span class="zi-label">Revenue</span><span class="zi-value">${z.revenue}</span></div>
+      <div class="zi-row"><span class="zi-label">Website</span><span class="zi-value"><a class="zi-link" href="https://${z.website}" target="_blank">${z.website}</a></span></div>
+    </div>
+    <div class="zi-section">
+      <div class="zi-section-title">Tech Stack <span style="color:#991B1B;font-size:9px;">⚠ = competitor &nbsp;</span><span style="color:#1D4ED8;font-size:9px;">✓ = uses Amplitude</span></div>
+      <div class="tech-chips">${chips}</div>
+    </div>
+    <div class="zi-section">
+      <div class="zi-section-title">Recent Signals</div>
+      ${sigs}
+    </div>`;
+}
+
+// ================================================================
+// RENDER SALESFORCE
+// ================================================================
+function renderSalesforce(acct) {
+  const sf = accountData[acct].salesforce;
+  const currentNS = nsOverrides[acct] || sf.nextSteps;
+  const acts = sf.activities.map(a => `<div class="activity-item"><span class="activity-type">${a.type}</span><div class="activity-body"><div class="activity-date">${a.date}</div><div class="activity-note">${a.note}</div></div></div>`).join('');
+  const safeAcct = acct.replace(/[^a-zA-Z0-9]/g, '_');
+  document.getElementById("salesforceBody").innerHTML = `
+    <a class="sf-opp-name" href="#" onclick="return false;">${sf.oppName}</a>
+    <div class="sf-meta">
+      <div class="sf-meta-item"><div class="sf-meta-label">Stage</div><div class="sf-meta-value">${sf.stage}</div></div>
+      <div class="sf-meta-item"><div class="sf-meta-label">Close Date</div><div class="sf-meta-value">${sf.closeDate}</div></div>
+      <div class="sf-meta-item"><div class="sf-meta-label">Last Activity</div><div class="sf-meta-value">${sf.lastActivity}</div></div>
+      <div class="sf-meta-item"><div class="sf-meta-label">Status</div><div class="sf-meta-value" style="color:#0052F2;">Active</div></div>
+    </div>
+    <div class="sf-section-title">Next Steps</div>
+    <div id="nsD_${safeAcct}" class="sf-next-steps-display">${currentNS}</div>
+    <textarea id="nsE_${safeAcct}" class="sf-next-steps-edit" style="display:none;">${currentNS}</textarea>
+    <div id="nsDA_${safeAcct}">
+      <button class="edit-btn" onclick="startEdit('${safeAcct}')">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit Next Steps
+      </button>
+    </div>
+    <div id="nsEA_${safeAcct}" style="display:none;" class="sf-edit-actions">
+      <button class="btn-primary" onclick="saveNS('${safeAcct}','${acct}')">Save to Salesforce</button>
+      <button class="btn-secondary" onclick="cancelEdit('${safeAcct}','${acct}')">Cancel</button>
+    </div>
+    <div id="nsT_${safeAcct}" class="save-toast">✓ Saved to Salesforce</div>
+    <div class="sf-section-title" style="margin-top:14px;">Recent Activity</div>
+    ${acts}`;
+}
+
+function startEdit(id) { document.getElementById(`nsD_${id}`).style.display='none'; document.getElementById(`nsE_${id}`).style.display='block'; document.getElementById(`nsDA_${id}`).style.display='none'; document.getElementById(`nsEA_${id}`).style.display='flex'; document.getElementById(`nsE_${id}`).focus(); }
+function saveNS(id, acct) {
+  const val = document.getElementById(`nsE_${id}`).value;
+  nsOverrides[acct] = val;
+  document.getElementById(`nsD_${id}`).textContent = val;
+  document.getElementById(`nsD_${id}`).style.display='block'; document.getElementById(`nsE_${id}`).style.display='none'; document.getElementById(`nsDA_${id}`).style.display='block'; document.getElementById(`nsEA_${id}`).style.display='none';
+  const t = document.getElementById(`nsT_${id}`); t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+}
+function cancelEdit(id, acct) { document.getElementById(`nsE_${id}`).value = nsOverrides[acct] || accountData[acct].salesforce.nextSteps; document.getElementById(`nsD_${id}`).style.display='block'; document.getElementById(`nsE_${id}`).style.display='none'; document.getElementById(`nsDA_${id}`).style.display='block'; document.getElementById(`nsEA_${id}`).style.display='none'; }
+
+// ================================================================
+// RENDER 6SENSE
+// ================================================================
+function render6sense(acct) {
+  const s = accountData[acct].sixsense;
+  const r = 46; const circ = 2 * Math.PI * r;
+  const offset = circ - (s.score / 100) * circ;
+  const scoreColor = s.score >= 80 ? "#EF4444" : s.score >= 65 ? "#F59E0B" : s.score >= 45 ? "#0052F2" : "#94A3B8";
+  const stageCls = { Awareness: "stage-awareness", Consideration: "stage-consideration", Decision: "stage-decision", Purchase: "stage-purchase" }[s.stage] || "stage-awareness";
+  const personas = s.personas.map(p => `<span class="persona-pill">${p}</span>`).join('');
+  const keywords = s.keywords.map(k => `<span class="keyword-chip">${k}</span>`).join('');
+  const typeMap = { web: "intent-web", content: "intent-content", search: "intent-search", social: "intent-social" };
+  const activities = s.activities.map(a => `
+    <div class="intent-item">
+      <div class="intent-date">${a.date}</div>
+      <span class="intent-type-badge ${typeMap[a.type] || 'intent-web'}">${a.label}</span>
+      <div class="intent-text">${a.text}</div>
+    </div>`).join('');
+
+  document.getElementById("sixsenseBody").innerHTML = `
+    <div class="sense-layout">
+      <div style="display:flex;flex-direction:column;align-items:center;border-right:1px solid #F1F5F9;padding-right:20px;">
+        <div class="score-ring-wrap">
+          <div class="score-ring">
+            <svg width="110" height="110" viewBox="0 0 110 110">
+              <circle class="score-ring-bg" cx="55" cy="55" r="${r}"/>
+              <circle class="score-ring-fill" cx="55" cy="55" r="${r}" stroke="${scoreColor}" stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/>
+            </svg>
+            <div class="score-center">
+              <div class="score-number" style="color:${scoreColor};">${s.score}</div>
+              <div class="score-label">Intent</div>
+            </div>
+          </div>
+          <span class="stage-badge ${stageCls}">${s.stage}</span>
+          <div class="personas-title" style="align-self:flex-start;">Engaged Personas</div>
+          <div style="align-self:flex-start;">${personas}</div>
+        </div>
+      </div>
+      <div>
+        <div class="sense-right-title">Top Research Keywords</div>
+        <div class="keyword-chips">${keywords}</div>
+        <div class="sense-right-title">Recent Intent Activity</div>
+        ${activities}
+      </div>
+    </div>`;
+}
+
+// ================================================================
+// RENDER MUTINY
+// ================================================================
+function renderMutiny(acct) {
+  const m = accountData[acct].mutiny;
+  const idHtml = m.identified
+    ? `<div class="identified-banner identified-yes"><div class="id-dot id-dot-yes"></div>Identified on amplitude.com &nbsp;·&nbsp; ${m.visits} visits</div>`
+    : `<div class="identified-banner identified-no"><div class="id-dot id-dot-no"></div>Not yet identified on website</div>`;
+  const pages = m.pages.map(p => {
+    const engClass = p.engagement === 'high' ? 'eng-high' : p.engagement === 'med' ? 'eng-med' : 'eng-low';
+    const engLabel = p.engagement === 'high' ? 'High' : p.engagement === 'med' ? 'Med' : 'Low';
+    return `<div class="page-visit-item">
+      <div><div class="page-url">${p.url}</div><div class="page-personalization">${p.personalization}</div></div>
+      <div class="engagement-bar-wrap"><div class="engagement-bar ${engClass}"></div><span class="eng-label">${engLabel}</span></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById("mutinyBody").innerHTML = `
+    <div class="mutiny-layout">
+      <div>
+        ${idHtml}
+        ${m.lastSeen ? `<div class="last-seen-row"><span class="last-seen-label">Last seen</span><span class="last-seen-value">${m.lastSeen}</span></div>` : ''}
+        <div class="mutiny-section-title">Segment</div>
+        <div class="mutiny-segment">${m.segment}<div class="mutiny-sub">${m.persona}</div></div>
+        <div class="mutiny-section-title">Pages Visited (Personalized)</div>
+        ${pages}
+      </div>
+      <div>
+        <div class="mutiny-section-title">Recommended Outreach Angle</div>
+        <div class="rec-card">
+          <div class="rec-card-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            AI-Recommended Play
+          </div>
+          <div class="rec-card-body">${m.recommendation}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ================================================================
+// QUICK ACTIONS CONFIG
+// condition(d) = function(accountData[acct]) → true = show
+// ================================================================
+const quickActionSections = [
+  {
+    label: "Meeting",
+    actions: [
+      { id:"call-prep",    emoji:"📞",  label:"Prep for This Call",      iconCls:"qa-icon-green",  ext:null, skill:"Use the sales:call-prep skill in Cowork — pulls account context, attendee research, and builds a suggested agenda.", condition:()=>true },
+      { id:"call-summary", emoji:"📝",  label:"Summarize a Call",        iconCls:"qa-icon-green",  ext:null, skill:"Use the sales:call-summary skill in Cowork — paste in notes or a transcript to extract action items and draft the follow-up email.", condition:()=>true },
+    ]
+  },
+  {
+    label: "Intel",
+    actions: [
+      { id:"battlecard",      emoji:"⚔️",  label:"Build Battlecard",        iconCls:"qa-icon-orange", ext:null, skill:"Use the sales:competitive-intelligence skill in Cowork — builds an interactive HTML battlecard for the competitor(s) in this account's tech stack.", condition:(d)=>d.zoominfo.techStack.some(t=>t.type==='competitor') },
+      { id:"expansion-intel", emoji:"📈",  label:"Run Expansion Intel",     iconCls:"qa-icon-teal",   ext:null, skill:"Use the amplitude-expansion-intel skill in Cowork — downloads usage reports, checks Salesforce history, identifies product whitespace for this account.", condition:(d)=>d.type==='Expansion' },
+      { id:"account-research",emoji:"🔍",  label:"Full Account Research",   iconCls:"qa-icon-orange", ext:null, skill:"Use the sales:account-research skill in Cowork — deep research on the company and key contacts, with actionable sales intel.", condition:(d)=>d.stage.includes('0')||d.stage.includes('Lost')||d.type==='New Logo' },
+    ]
+  },
+  {
+    label: "Outreach",
+    actions: [
+      { id:"sequence",    emoji:"🎯",  label:"Build Outreach Sequence", iconCls:"qa-icon-blue",   ext:"https://outreach-builder-beta.vercel.app/", extLabel:"Open Outreach Builder", skill:"Use the sales:draft-outreach skill in Cowork to build a multi-step sequence.", condition:()=>true },
+    ]
+  },
+  {
+    label: "Assets",
+    actions: [
+      { id:"deck",     emoji:"📊",  label:"Create Account Deck",  iconCls:"qa-icon-purple", ext:null, skill:"Use the amplitude-deck skill in Cowork — creates fully branded .pptx decks.", condition:()=>true },
+      { id:"event",    emoji:"🗓️", label:"Draft Event Invite",   iconCls:"qa-icon-green",  ext:null, skill:"Use the sales:create-an-asset skill in Cowork to generate a personalized event invitation.", condition:()=>true },
+      { id:"contacts", emoji:"👤",  label:"Find New Contacts",    iconCls:"qa-icon-orange", ext:null, skill:"Use the apollo:prospect or zoominfo-prospecting skill in Cowork to find and enrich contacts.", condition:(d)=>d.buyingMap&&d.buyingMap.tiers.flatMap(t=>t.people).some(p=>p.status==='unknown') },
+      { id:"sfnotes",  emoji:"☁️",  label:"Update SF Next Steps", iconCls:"qa-icon-teal",   scroll:"salesforceBody", skill:"Scroll to the Salesforce widget to edit inline, or use the sf-next-steps-updater skill in Cowork.", condition:()=>true },
+    ]
+  }
+];
+// Modal-only actions (not shown in Quick Actions panel, but available for nextStep CTA buttons)
+const modalOnlyActions = [
+  { id:"write-email", emoji:"✉️", label:"Write Outreach Email", iconCls:"qa-icon-blue", ext:"https://outreach-builder-beta.vercel.app/", extLabel:"Open Outreach Builder", skill:"Use the sales:draft-outreach skill in Cowork for AI-personalized emails." },
+];
+// flat list for modal lookups — includes hidden modal-only actions
+const quickActions = [...quickActionSections.flatMap(s=>s.actions), ...modalOnlyActions];
+
+// ================================================================
+// RENDER ACTION HUB
+// ================================================================
+function renderActionHub(acct) {
+  const d = accountData[acct];
+  const steps = d.nextSteps || [];
+  const urgMap = { today:["sl-today","DO TODAY"], week:["sl-week","THIS WEEK"], month:["sl-month","THIS MONTH"] };
+  const typeMap = { email:"stype-email", call:"stype-call", deck:"stype-deck", linkedin:"stype-linkedin", meeting:"stype-meeting", event:"stype-event" };
+  const typeLabel = { email:"Email", call:"Call", deck:"Deck", linkedin:"LinkedIn", meeting:"Meeting", event:"Event" };
+
+  // Next steps
+  let stepsHtml = `<div class="hub-panel-title">🎯 Prioritized Actions — ${acct}</div>`;
+  stepsHtml += steps.map(s => {
+    const [urgCls, urgText] = urgMap[s.urgency] || ["sl-month","THIS MONTH"];
+    const typeCls = typeMap[s.type] || "stype-email";
+    const whoChips = s.who.map(w => `<span class="who-chip ${w==='Susan'?'who-me':''}">${w}</span>`).join('');
+    return `<div class="step-item urg-${s.urgency}">
+      <div class="step-num">${s.p}</div>
+      <div class="step-body">
+        <div class="step-meta">
+          <span class="step-urgency ${urgCls}">${urgText}</span>
+          <span class="step-type-badge ${typeCls}">${typeLabel[s.type]||s.type}</span>
+        </div>
+        <div class="step-title">${s.title}</div>
+        <div class="step-why">${s.why}</div>
+        <div class="step-footer">
+          <div class="step-who">${whoChips}</div>
+          <button class="step-cta" onclick="openAction('${s.action}','${acct.replace(/'/g,"\\'")}','${(s.title||'').replace(/'/g,"\\'")}')">
+            ${s.cta} →
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById("hubSteps").innerHTML = stepsHtml;
+
+  // Quick actions — context-filtered by section
+  let actHtml = `<div class="hub-panel-title">Quick Actions</div>`;
+  quickActionSections.forEach(section => {
+    const visible = section.actions.filter(qa => !qa.condition || qa.condition(d));
+    if (!visible.length) return;
+    actHtml += `<div class="qa-section-label">${section.label}</div>`;
+    visible.forEach(qa => {
+      if (qa.scroll) {
+        actHtml += `<button class="qa-btn" onclick="document.getElementById('${qa.scroll}').scrollIntoView({behavior:'smooth'})"><span class="qa-icon ${qa.iconCls}">${qa.emoji}</span>${qa.label}</button>`;
+      } else if (qa.ext) {
+        actHtml += `<a class="qa-btn external" href="${qa.ext}" target="_blank"><span class="qa-icon ${qa.iconCls}">${qa.emoji}</span>${qa.label}</a>`;
+      } else {
+        actHtml += `<button class="qa-btn" onclick="openAction('${qa.id}','${acct.replace(/'/g,"\\'")}','')"><span class="qa-icon ${qa.iconCls}">${qa.emoji}</span>${qa.label}</button>`;
+      }
+    });
+  });
+  document.getElementById("hubActions").innerHTML = actHtml;
+}
+
+// ================================================================
+// MODAL
+// ================================================================
+
+    function renderAll(acct) {
+      document.getElementById('detailAccountName').textContent = acct;
+      document.getElementById('accountSelect').value = acct;
+      renderContextBar(acct);
+      renderLinkedIn(acct);
+      renderBuyingMap(acct);
+      renderZoomInfo(acct);
+      renderSalesforce(acct);
+      render6sense(acct);
+      renderMutiny(acct);
+      renderActionHub(acct);
+    }
+
+    // Override openAction to use nav.js version with built prompt
+    const _origOpenAction = window.openAction;
+    function openAction(actionId, acct, title) {
+      const prompt = buildAccountPrompt(actionId, acct || currentAccount);
+      window._openActionModal(actionId, acct || currentAccount, title, prompt);
+    }
+
+    // Init
+    injectNav('account');
+    injectModal();
+    // Expose modal opener
+    window._openActionModal = window.openAction;
+
+    rebuildSelect();
+    switchAccount(currentAccount);
+  </script>
+
+  <!-- Stubs for ported render functions -->
+  <span id="syncBtn" style="display:none;"></span>
+  <span id="acctCount" style="display:none;"></span>
+
+</body>
+</html>
