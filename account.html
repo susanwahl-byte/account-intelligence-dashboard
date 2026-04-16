@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Account Detail — Amplitude AE Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
 /* ── Amplitude Design Tokens ─────────────────────────────────────── */
 :root {
@@ -1978,9 +1980,20 @@ function renderActionHub(acct) {
 // MODAL
 // ================================================================
 
+    function showError(msg) {
+      let el = document.getElementById('_dbgBanner');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = '_dbgBanner';
+        el.style.cssText = 'position:fixed;top:60px;left:0;right:0;background:#FEE2E2;color:#991B1B;font-family:monospace;font-size:11px;padding:8px 16px;z-index:9999;border-bottom:1px solid #FCA5A5;white-space:pre-wrap;max-height:120px;overflow-y:auto;';
+        document.body.appendChild(el);
+      }
+      el.textContent += msg + '\n';
+    }
+
     function renderAll(acct) {
       if (!accountData[acct]) {
-        console.error('renderAll: unknown account', acct);
+        showError('renderAll: unknown account "' + acct + '"');
         document.getElementById('detailAccountName').textContent = acct + ' (not found)';
         return;
       }
@@ -1989,7 +2002,7 @@ function renderActionHub(acct) {
       const sections = [renderContextBar, renderLinkedIn, renderBuyingMap, renderZoomInfo, renderSalesforce, render6sense, renderMutiny, renderActionHub];
       sections.forEach(fn => {
         try { fn(acct); }
-        catch(e) { console.error(fn.name + ' failed for ' + acct + ':', e); }
+        catch(e) { showError(fn.name + '(' + acct + '): ' + e.message); console.error(fn.name, e); }
       });
     }
 
